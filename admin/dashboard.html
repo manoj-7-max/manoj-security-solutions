@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Manoj Security Solutions</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Admin CSS -->
+    <link rel="stylesheet" href="css/admin.css">
+    <script>
+        // Check Authentication
+        if (!localStorage.getItem('adminLoggedIn')) {
+            window.location.href = 'index.html';
+        }
+    </script>
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="#" class="sidebar-brand">
+                    <i class="fa-solid fa-shield-halved"></i> Manoj Security
+                </a>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="dashboard.html" class="active"><i class="fa-solid fa-grip"></i> Dashboard</a></li>
+                <li><a href="products.html"><i class="fa-solid fa-box"></i> Products</a></li>
+                <li><a href="services.html"><i class="fa-solid fa-screwdriver-wrench"></i> Services</a></li>
+                <li><a href="inquiries.html"><i class="fa-solid fa-envelope"></i> Inquiries</a></li>
+                <li><a href="invoice.html"><i class="fa-solid fa-file-invoice-dollar"></i> Invoice</a></li>
+                <li><a href="#" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+            </ul>
+            <div class="sidebar-footer">
+                <p style="font-size: 0.8rem; color: #777;">&copy; 2024 Manoj Security</p>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div style="display: flex; align-items: center;">
+                    <div class="menu-toggle" onclick="toggleSidebar()">
+                        <i class="fa-solid fa-bars"></i>
+                    </div>
+                    <div class="page-title">
+                        <h1>Dashboard Overview</h1>
+                    </div>
+                </div>
+                <div class="user-profile">
+                    <div class="user-info">
+                        <span class="user-name">Admin User</span>
+                        <span class="user-role">Super Admin</span>
+                    </div>
+                    <div class="stat-icon" style="width: 40px; height: 40px; font-size: 1rem;">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-envelope-open-text"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="stat-inquiries">-</h3>
+                        <p>Total Inquiries</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-box-open"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="stat-products">-</h3>
+                        <p>Total Products</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-screwdriver-wrench"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="stat-services">-</h3>
+                        <p>Total Services</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="stat-pending">-</h3>
+                        <p>Pending Inquiries</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Inquiries -->
+            <div class="admin-section">
+                <div class="section-header-flex">
+                    <h3>Recent Inquiries</h3>
+                    <button class="btn btn-primary btn-sm">View All</button>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Service/Product</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inquiriesTableBody">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('open');
+        }
+
+        function logout() {
+            localStorage.removeItem('adminLoggedIn');
+            window.location.href = 'index.html';
+        }
+
+        let allInquiries = [];
+
+        // Fetch Inquiries
+        function loadInquiries() {
+            fetch('/api/inquiries')
+                .then(res => res.json())
+                .then(data => {
+                    allInquiries = data;
+                    // Update Count
+                    const statElement = document.querySelector('.stat-info h3');
+                    if (statElement) statElement.innerText = data.length;
+
+                    const tbody = document.getElementById('inquiriesTableBody');
+                    tbody.innerHTML = '';
+
+                    data.forEach(inquiry => {
+                        const date = new Date(inquiry.date).toLocaleDateString();
+                        const statusColor = inquiry.status === 'New' ? 'active' : (inquiry.status === 'Resolved' ? 'resolved' : 'pending');
+
+                        const tr = `
+                            <tr>
+                                <td>${inquiry.name} <br> <small style="color:#777">${inquiry.phone}</small></td>
+                                <td>${inquiry.service}</td>
+                                <td>${date}</td>
+                                <td>
+                                    <select onchange="updateStatus(${inquiry.id}, this.value)" style="padding: 5px; border-radius: 4px; border: 1px solid #444; background: #222; color: white;">
+                                        <option value="New" ${inquiry.status === 'New' ? 'selected' : ''}>New</option>
+                                        <option value="Pending" ${inquiry.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                                        <option value="Resolved" ${inquiry.status === 'Resolved' ? 'selected' : ''}>Resolved</option>
+                                        <option value="Closed" ${inquiry.status === 'Closed' ? 'selected' : ''}>Closed</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <button onclick="viewMessage(${inquiry.id})" class="action-btn" title="View Message"><i class="fa-solid fa-eye"></i></button>
+                                    <button onclick="deleteInquiry(${inquiry.id})" class="action-btn delete"><i class="fa-solid fa-trash"></i></button>
+                                </td>
+                            </tr>
+                        `;
+                        tbody.innerHTML += tr;
+                    });
+                })
+                .catch(err => console.error('Error loading inquiries:', err));
+        }
+
+        function viewMessage(id) {
+            const inquiry = allInquiries.find(i => i.id === id);
+            if (inquiry) {
+                alert(inquiry.message);
+            }
+        }
+
+        function updateStatus(id, newStatus) {
+            fetch(`/api/inquiries/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: newStatus })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    // Optional: Show success notification
+                    console.log('Status updated');
+                    loadStats(); // Refresh stats
+                });
+        }
+
+        function deleteInquiry(id) {
+            if (confirm('Are you sure you want to remove this inquiry?')) {
+                fetch(`/api/inquiries/${id}`, { method: 'DELETE' })
+                    .then(res => res.json())
+                    .then(data => loadInquiries());
+            }
+        }
+
+        // Fetch Stats
+        function loadStats() {
+            fetch('/api/stats')
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('stat-inquiries').innerText = data.inquiries;
+                    document.getElementById('stat-products').innerText = data.products;
+                    document.getElementById('stat-services').innerText = data.services;
+                    document.getElementById('stat-pending').innerText = data.pending;
+                })
+                .catch(err => console.error('Error loading stats:', err));
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadInquiries();
+            loadStats();
+        });
+    </script>
+</body>
+
+</html>

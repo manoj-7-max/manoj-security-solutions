@@ -1,0 +1,62 @@
+[
+    {
+        "id": 1,
+        "name": "CCTV Camera Installation & Sales",
+        "description": "We provide high-definition CCTV surveillance systems tailored to your specific needs. From single-camera setups for homes to complex multi-site monitoring for businesses.",
+        "icon": "fa-solid fa-video",
+        "features": [
+            "HD & IP Cameras",
+            "Night Vision & Motion Detection",
+            "Remote Mobile Monitoring"
+        ],
+        "image": "https://images.unsplash.com/photo-1557597774-9d273605dfa9?q=80&w=2674&auto=format&fit=crop"
+    },
+    {
+        "id": 2,
+        "name": "Biometric Attendance Systems",
+        "description": "Streamline your employee management with our advanced biometric attendance systems. Perfect for offices, factories, and schools to ensure accurate timekeeping.",
+        "icon": "fa-solid fa-fingerprint",
+        "features": [
+            "Fingerprint & Face Recognition",
+            "Payroll Integration Support",
+            "Cloud-based Reporting"
+        ],
+        "image": "https://images.unsplash.com/photo-1622675235450-4824e4d65011?q=80&w=2672&auto=format&fit=crop"
+    },
+    {
+        "id": 3,
+        "name": "Biometric & Smart Door Locks",
+        "description": "Upgrade your home or office security with keyless entry solutions. Our smart locks offer convenience without compromising on safety.",
+        "icon": "fa-solid fa-lock",
+        "features": [
+            "Fingerprint, Pin, & Card Access",
+            "Smartphone App Control",
+            "Emergency Key Override"
+        ],
+        "image": "https://images.unsplash.com/photo-1558002038-1091a1661726?q=80&w=2600&auto=format&fit=crop"
+    },
+    {
+        "id": 4,
+        "name": "Annual Maintenance Contracts (AMC)",
+        "description": "Security systems need regular care to function 100%. We offer comprehensive AMC packages to keep your devices running smoothly.",
+        "icon": "fa-solid fa-screwdriver-wrench",
+        "features": [
+            "Regular Preventive Checks",
+            "On-call Priority Support",
+            "Cost-effective Packages"
+        ],
+        "image": "https://plus.unsplash.com/premium_photo-1661962648797-a0680a68d0bb?q=80&w=2670&auto=format&fit=crop"
+    },
+    {
+        "id": 5,
+        "name": "Web Site Creation Services",
+        "description": "Elevate your business with a professional online presence. We build stunning, responsive, and high-performance websites tailored to your brand.",
+        "icon": "fa-solid fa-laptop-code",
+        "features": [
+            "Custom Web Design & Development",
+            "SEO Optimized & Mobile Responsive",
+            "E-commerce & Business Portfolios"
+        ],
+        "image": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2015&auto=format&fit=crop"
+    }
+]

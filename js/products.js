@@ -1,0 +1,69 @@
+document.addEventListener('DOMContentLoaded', function () {
+    fetch('/api/products')
+        .then(response => response.json())
+        .then(products => {
+            const container = document.querySelector('.products-grid');
+            container.innerHTML = ''; // Clear loading/static content
+
+            products.forEach(product => {
+                // Determine image/icon display
+                let imageHtml = '';
+                if (product.image) {
+                    imageHtml = `<img src="${product.image}" alt="${product.name}">`;
+                } else {
+                    imageHtml = `<i class="${product.icon}" style="color: #66fcf1; font-size: 3rem;"></i>`;
+                }
+
+                const card = `
+                    <div class="product-card">
+                        <div class="product-img">
+                            ${imageHtml}
+                        </div>
+                        <div class="product-info">
+                            <span class="tag">${product.category}</span>
+                            <h3>${product.name}</h3>
+                            <p class="price" style="color: #66fcf1; font-weight: bold; margin-bottom: 10px;">
+                                ${product.price && product.price !== 'TBD' ? '₹' + product.price : 'Price on Request'}
+                            </p>
+                            <p style="color: #aaa; margin-bottom: 20px;">${product.description}</p>
+                            <button onclick="addToCart('${product.name}')" class="btn btn-secondary" style="width: 100%;">Add to Cart</button>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += card;
+            });
+        })
+        .catch(err => console.error('Error loading products:', err));
+});
+
+// Cart Logic
+let cart = JSON.parse(localStorage.getItem('enquiryCart')) || [];
+
+function addToCart(productName) {
+    if (!cart.includes(productName)) {
+        cart.push(productName);
+        localStorage.setItem('enquiryCart', JSON.stringify(cart));
+        updateCartUI();
+        alert(`${productName} added to inquiry cart!`);
+    } else {
+        alert('Item already in cart');
+    }
+}
+
+function updateCartUI() {
+    const cartBtn = document.getElementById('cart-fab');
+    if (!cartBtn) {
+        const btn = document.createElement('a');
+        btn.id = 'cart-fab';
+        btn.href = 'contact.html';
+        btn.className = 'whatsapp-float';
+        btn.style.bottom = '90px';
+        btn.style.background = '#ff0000';
+        btn.innerHTML = `<i class="fa-solid fa-cart-shopping"></i> <span id="cart-count" style="font-size: 12px; font-weight: bold;">${cart.length}</span>`;
+        document.body.appendChild(btn);
+    } else {
+        document.getElementById('cart-count').innerText = cart.length;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', updateCartUI);

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us | Manoj Security Solutions</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <i class="fa-solid fa-shield-halved"></i> Manoj Security <span>Solutions</span>
+            </a>
+            <nav class="navbar">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="contact.html" class="active">Contact</a></li>
+                    <li><a href="admin/index.html" style="color: var(--color-primary);">Admin</a></li>
+                </ul>
+            </nav>
+            <div class="header-right">
+                <a href="tel:+91 9944305980" class="btn btn-outline"><i class="fa-solid fa-phone"></i> Call Now</a>
+                <div class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Page Header -->
+    <section class="page-header section-padding"
+        style="padding-top: 150px; background: linear-gradient(rgba(11,12,16,0.9), rgba(11,12,16,0.9)), url('https://images.unsplash.com/photo-1596524430615-b46475ddff6e?q=80&w=2670&auto=format&fit=crop'); background-size: cover; background-position: center;">
+        <div class="container text-center">
+            <h1>Contact <span class="text-highlight">Us</span></h1>
+            <p>Get in touch for a free site survey and consultation.</p>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section section-padding" id="site-survey">
+        <div class="container">
+            <div class="contact-wrapper">
+
+                <!-- Contact Info -->
+                <div class="contact-info">
+                    <h2 style="color: var(--color-white); margin-bottom: 20px;">Get in Touch</h2>
+                    <p style="margin-bottom: 40px; color: #aaa;">We are here to help you secure your home and business.
+                        Reach out to us via phone, email, or visit our office.</p>
+
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fa-solid fa-phone"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>Phone Number</h4>
+                            <p>+91 9944305980</p>
+                            <p>+91 9080510569</p>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fa-solid fa-envelope"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>Email Address</h4>
+                            <p>.com</p>
+                            <p>.com</p>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fa-solid fa-location-dot"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>Service Area</h4>
+                            <p>Based in Tamil Nadu</p>
+                            <p>Serving across India</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-2">
+                        <a href="https://wa.me/919944305980" class="btn btn-whatsapp"><i
+                                class="fa-brands fa-whatsapp"></i> Chat on WhatsApp</a>
+                    </div>
+                </div>
+
+                <!-- Contact Form -->
+                <div class="contact-form-container">
+                    <h2 style="color: var(--color-white); margin-bottom: 20px;">Request a Callback</h2>
+                    <form id="contactForm">
+                        <div class="form-group">
+                            <label for="name">Your Name</label>
+                            <input type="text" id="name" name="name" class="form-control" placeholder="John Doe"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" name="phone" class="form-control" placeholder="+91 98765 43210"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="service">Service Interested In</label>
+                            <select id="service" name="service" class="form-control">
+                                <option value="cctv">CCTV Camera Installation</option>
+                                <option value="biometric">Biometric Systems</option>
+                                <option value="smartlock">Smart Door Locks</option>
+                                <option value="accesscontrol">Access Control Systems</option>
+                                <option value="amc">AMC Support</option>
+                                <option value="website">Web Site Creation</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Message</label>
+                            <textarea id="message" name="message" class="form-control"
+                                placeholder="Tell us about your requirements..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Send Request</button>
+                        <p id="formStatus" style="margin-top: 15px; display: none;"></p>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Map (Bonus) -->
+    <section class="map-section">
+        <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d100939.98555098464!2d79.9823!3d13.0827!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a5265ea4f7d3361%3A0x6e61a70b6863d433!2sChennai%2C%20Tamil%20Nadu!5e0!3m2!1sen!2sin!4v1684343829000!5m2!1sen!2sin"
+            width="100%" height="400" style="border:0; filter: grayscale(100%) invert(90%);" allowfullscreen=""
+            loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-col">
+                <h3>About Us</h3>
+                <p>Leading provider of security and automation solutions across India. Committed to safety and
+                    innovation.</p>
+            </div>
+            <div class="footer-col">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Contact</h3>
+                <p><i class="fa-solid fa-location-dot"></i> Tamil Nadu, India</p>
+                <p><i class="fa-solid fa-phone"></i> +91 98765 43210</p>
+                <p><i class="fa-solid fa-envelope"></i> info@manojsecurity.com</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Manoj Security Solutions – All Rights Reserved. <a href="admin/index.html"
+                    style="color: #444; font-size: 0.8rem; text-decoration: none; margin-left: 10px;">Admin</a></p>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/919944305980" class="whatsapp-float" target="_blank">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
+    <script src="js/script.js"></script>
+    <script>
+        // Check for cart items
+        document.addEventListener('DOMContentLoaded', () => {
+            const cart = JSON.parse(localStorage.getItem('enquiryCart')) || [];
+            if (cart.length > 0) {
+                const msgBox = document.getElementById('message');
+                msgBox.value = "I am interested in the following products:\n\n" + cart.map(item => "- " + item).join("\n");
+            }
+        });
+
+        document.getElementById('contactForm')?.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const btn = this.querySelector('button');
+            const status = document.getElementById('formStatus');
+
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
+            btn.disabled = true;
+
+            const formData = {
+                name: document.getElementById('name').value,
+                phone: document.getElementById('phone').value,
+                service: document.getElementById('service').value,
+                message: document.getElementById('message').value
+            };
+
+            fetch('/api/inquiries', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            })
+                .then(res => res.json())
+                .then(data => {
+                    status.style.display = 'block';
+                    status.style.color = '#2ecc71';
+                    status.innerText = 'Thank you! We will contact you shortly.';
+                    this.reset();
+                    // Clear cart
+                    localStorage.removeItem('enquiryCart');
+                })
+                .catch(err => {
+                    status.style.display = 'block';
+                    status.style.color = '#ff4d4d';
+                    status.innerText = 'Something went wrong. Please try again.';
+                })
+                .finally(() => {
+                    btn.innerHTML = 'Send Request';
+                    btn.disabled = false;
+                });
+        });
+    </script>
+</body>
+
+</html>

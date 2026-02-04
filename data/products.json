@@ -1,0 +1,38 @@
+[
+  {
+    "id": 2,
+    "name": "Bullet Outdoor Camera",
+    "category": "CCTV",
+    "description": "Weatherproof outdoor camera with long-range IR and motion detection.",
+    "icon": "fa-solid fa-camera"
+  },
+  {
+    "id": 3,
+    "name": "8 Channel DVR/NVR",
+    "category": "Accessories",
+    "description": "High-capacity recording unit with remote viewing support.",
+    "icon": "fa-solid fa-hard-drive"
+  },
+  {
+    "id": 5,
+    "name": "Smart Door Lock",
+    "category": "Smart Home",
+    "description": "Keyless entry lock with app control, fingerprint and passcode.",
+    "icon": "fa-solid fa-lock"
+  },
+  {
+    "id": 6,
+    "name": "Burglar Alarm System",
+    "category": "Alarm",
+    "description": "Intrusion detection system with door sensors and siren.",
+    "icon": "fa-solid fa-bell"
+  },
+  {
+    "id": 1770214789517,
+    "name": "\tHIKVISION 2MP COLOR NIGHT VISION",
+    "category": "CCTV",
+    "description": "About this item\r\nNOTE: This camera is compatible with 2 MP TVI supporting DVR only\r\n2 MP ColorVu Fixed Mini Bullet Camera; 24/7 color imaging with F1.0 aperture\r\nUp to 20 m white light distance for bright night imaging\r\nOne port for four switchable signals (TVI/AHD/CVI/CVBS) and Water and dust resistant (IP67)\r\nSpecific Uses For Product: Surveillance; Included Components: Screws; Mounting Type: Embedded",
+    "icon": "fa-solid fa-box",
+    "image": "/uploads/1770214789505.webp"
+  }
+]
