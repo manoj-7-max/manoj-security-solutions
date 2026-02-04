@@ -130,6 +130,19 @@
                 </div>
             </div>
 
+            <!-- Message Modal -->
+            <div id="msgModal" class="modal"
+                style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;">
+                <div
+                    style="background: #222; padding: 30px; border-radius: 8px; max-width: 500px; width: 90%; position: relative;">
+                    <span onclick="closeModal()"
+                        style="position: absolute; right: 20px; top: 15px; cursor: pointer; font-size: 20px;">&times;</span>
+                    <h3 style="margin-bottom: 20px; color: #66fcf1;">Inquiry Message</h3>
+                    <p id="modalMsg" style="white-space: pre-wrap; color: #ddd; line-height: 1.6;"></p>
+                    <button onclick="closeModal()" class="btn btn-primary"
+                        style="margin-top: 20px; width: 100%;">Close</button>
+                </div>
+            </div>
         </main>
     </div>
 
@@ -190,7 +203,21 @@
         function viewMessage(id) {
             const inquiry = allInquiries.find(i => i.id === id);
             if (inquiry) {
-                alert(inquiry.message);
+                const modal = document.getElementById('msgModal');
+                document.getElementById('modalMsg').innerText = inquiry.message;
+                modal.style.display = 'flex';
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('msgModal').style.display = 'none';
+        }
+
+        // Close on outside click
+        window.onclick = function (event) {
+            const modal = document.getElementById('msgModal');
+            if (event.target == modal) {
+                modal.style.display = "none";
             }
         }
 

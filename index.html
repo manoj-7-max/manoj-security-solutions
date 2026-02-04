@@ -35,7 +35,29 @@
                 </ul>
             </nav>
             <div class="header-right">
-                <a href="tel:+919944305980" class="btn btn-outline"><i class="fa-solid fa-phone"></i> Call Now</a>
+                <div id="authButtons" style="display: none;">
+                    <a href="login.html" class="btn btn-outline" style="margin-right: 10px;">
+                        <i class="fa-solid fa-sign-in-alt"></i> Login
+                    </a>
+                    <a href="signup.html" class="btn btn-primary">
+                        <i class="fa-solid fa-user-plus"></i> Sign Up
+                    </a>
+                </div>
+                <div id="userMenu" style="display: none; position: relative;">
+                    <button onclick="toggleUserDropdown()" class="btn btn-outline"
+                        style="background: var(--color-secondary);">
+                        <i class="fa-solid fa-user"></i> <span id="userName">User</span>
+                    </button>
+                    <div id="userDropdown"
+                        style="display: none; position: absolute; right: 0; top: 50px; background: #1f2833; border-radius: 8px; padding: 10px; min-width: 150px; box-shadow: 0 5px 20px rgba(0,0,0,0.5); z-index: 1000;">
+                        <a href="#" onclick="logout()"
+                            style="display: block; padding: 8px; color: white; text-decoration: none;">
+                            <i class="fa-solid fa-sign-out-alt"></i> Logout
+                        </a>
+                    </div>
+                </div>
+                <a href="tel:+919944305980" class="btn btn-outline" style="margin-left: 10px;"><i
+                        class="fa-solid fa-phone"></i> Call Now</a>
                 <div class="hamburger" id="hamburger">
                     <span></span>
                     <span></span>
@@ -250,6 +272,41 @@
     </a>
 
     <script src="js/script.js"></script>
+    <script>
+        // Check authentication status
+        function checkAuth() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (user) {
+                document.getElementById('authButtons').style.display = 'none';
+                document.getElementById('userMenu').style.display = 'block';
+                document.getElementById('userName').innerText = user.name.split(' ')[0];
+            } else {
+                document.getElementById('authButtons').style.display = 'block';
+                document.getElementById('userMenu').style.display = 'none';
+            }
+        }
+
+        function toggleUserDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function logout() {
+            localStorage.removeItem('user');
+            window.location.reload();
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function (event) {
+            const userMenu = document.getElementById('userMenu');
+            const dropdown = document.getElementById('userDropdown');
+            if (!userMenu.contains(event.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+
+        checkAuth();
+    </script>
 </body>
 
 </html>

@@ -188,6 +188,7 @@ app.get('/api/contact', (req, res) => {
     res.json(config);
 });
 
+
 // Fallback for form submission (HTML)
 app.post('/contact.html', (req, res) => {
     try {
@@ -209,6 +210,102 @@ app.post('/contact.html', (req, res) => {
     } catch (err) {
         res.status(500).send("Error submitting form");
     }
+});
+
+// ========== AUTHENTICATION ROUTES ==========
+
+// User Signup
+app.post('/api/auth/signup', (req, res) => {
+    try {
+        const users = readData('users.json');
+        const { name, email, phone, password } = req.body;
+
+        // Check if user already exists
+        if (users.find(u => u.email === email)) {
+            return res.status(400).json({ error: 'Email already registered' });
+        }
+
+        const newUser = {
+            id: Date.now(),
+            name,
+            email,
+            phone,
+            password, // In production, hash this with bcrypt
+            authType: 'email',
+            createdAt: new Date().toISOString()
+        };
+
+        users.push(newUser);
+        writeData('users.json', users);
+
+        // Return user without password
+        const { password: _, ...userWithoutPassword } = newUser;
+        res.json({ success: true, user: userWithoutPassword });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// User Login
+app.post('/api/auth/login', (req, res) => {
+    try {
+        const users = readData('users.json');
+        const { email, password } = req.body;
+
+        const user = users.find(u => u.email === email && u.password === password);
+
+        if (!user) {
+            return res.status(401).json({ error: 'Invalid email or password' });
+        }
+
+        // Return user without password
+        const { password: _, ...userWithoutPassword } = user;
+        res.json({ success: true, user: userWithoutPassword });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Google Authentication
+app.post('/api/auth/google', async (req, res) => {
+    try {
+        const { credential } = req.body;
+
+        // Decode JWT token (basic implementation)
+        // In production, verify with Google's API
+        const base64Url = credential.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const payload = JSON.parse(Buffer.from(base64, 'base64').toString());
+
+        const users = readData('users.json');
+        let user = users.find(u => u.email === payload.email);
+
+        if (!user) {
+            // Create new user from Google data
+            user = {
+                id: Date.now(),
+                name: payload.name,
+                email: payload.email,
+                phone: '',
+                authType: 'google',
+                googleId: payload.sub,
+                picture: payload.picture,
+                createdAt: new Date().toISOString()
+            };
+            users.push(user);
+            writeData('users.json', users);
+        }
+
+        res.json({ success: true, user });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Get current user info
+app.get('/api/auth/me', (req, res) => {
+    // In production, verify JWT token from headers
+    res.json({ user: null }); // Placeholder
 });
 
 // Start Server
