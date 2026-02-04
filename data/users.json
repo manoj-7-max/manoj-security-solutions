@@ -1,1 +1,11 @@
-[]
+[
+  {
+    "id": 1770218446156,
+    "name": "Manoj R",
+    "email": "manojr9043@gmail.com",
+    "phone": "09944305980",
+    "password": "admin123",
+    "authType": "email",
+    "createdAt": "2026-02-04T15:20:46.156Z"
+  }
+]
