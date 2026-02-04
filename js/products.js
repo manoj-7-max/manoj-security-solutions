@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 ${product.price && product.price !== 'TBD' ? '₹' + product.price : 'Price on Request'}
                             </p>
                             <p style="color: #aaa; margin-bottom: 20px;">${product.description}</p>
-                            <button onclick="addToCart('${product.name}')" class="btn btn-secondary" style="width: 100%;">Add to Cart</button>
+                            <button onclick="addToCart('${product.name}', this)" class="btn btn-secondary" style="width: 100%;">Add to Cart</button>
                         </div>
                     </div>
                 `;
@@ -39,14 +39,30 @@ document.addEventListener('DOMContentLoaded', function () {
 // Cart Logic
 let cart = JSON.parse(localStorage.getItem('enquiryCart')) || [];
 
-function addToCart(productName) {
+function addToCart(productName, btnElement) {
     if (!cart.includes(productName)) {
         cart.push(productName);
         localStorage.setItem('enquiryCart', JSON.stringify(cart));
         updateCartUI();
-        alert(`${productName} added to inquiry cart!`);
+        
+        // Button Feedback
+        if(btnElement) {
+            const originalText = btnElement.innerText;
+            btnElement.innerText = 'Added!';
+            btnElement.style.background = '#2ecc71';
+            btnElement.disabled = true;
+            setTimeout(() => {
+                btnElement.innerText = 'Add to Cart';
+                btnElement.style.background = '';
+                btnElement.disabled = false;
+            }, 2000);
+        }
     } else {
-        alert('Item already in cart');
+        // Optional: Shake animation or distinct feedback
+        if(btnElement) {
+            btnElement.innerText = 'In Cart';
+            setTimeout(() => btnElement.innerText = 'Add to Cart', 1000);
+        }
     }
 }
 
