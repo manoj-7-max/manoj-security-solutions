@@ -41,19 +41,60 @@
     </div>
 
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function (e) {
+        // Check if user is already logged in as admin
+        const currentUser = JSON.parse(localStorage.getItem('user'));
+        if (currentUser && currentUser.email === 'admin@manojsecurity.com') {
+            localStorage.setItem('adminLoggedIn', 'true');
+            window.location.href = 'dashboard.html';
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async function (e) {
             e.preventDefault();
             const user = document.getElementById('username').value;
             const pass = document.getElementById('password').value;
             const errorMsg = document.getElementById('error-msg');
+            const btn = this.querySelector('button');
 
-            // Simple client-side check (FOR DEMO ONLY)
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Logging in...';
+
+            // Check for default admin credentials
             if (user === 'admin' && pass === 'admin123') {
-                // Save session
                 localStorage.setItem('adminLoggedIn', 'true');
                 window.location.href = 'dashboard.html';
-            } else {
+                return;
+            }
+
+            // Check against user database via API
+            try {
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: user, password: pass })
+                });
+
+                const result = await res.json();
+
+                if (res.ok && result.user) {
+                    // Check if user is admin (you can add admin flag to users)
+                    if (result.user.email === 'admin@manojsecurity.com' || result.user.isAdmin) {
+                        localStorage.setItem('adminLoggedIn', 'true');
+                        localStorage.setItem('user', JSON.stringify(result.user));
+                        window.location.href = 'dashboard.html';
+                    } else {
+                        errorMsg.innerText = 'Access denied. Admin privileges required.';
+                        errorMsg.style.display = 'block';
+                    }
+                } else {
+                    errorMsg.innerText = 'Invalid credentials';
+                    errorMsg.style.display = 'block';
+                }
+            } catch (err) {
+                errorMsg.innerText = 'Login failed. Using default admin credentials only.';
                 errorMsg.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Login';
             }
         });
     </script>
