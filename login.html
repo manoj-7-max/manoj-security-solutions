@@ -212,7 +212,12 @@
                 .then(data => {
                     if (data.user) {
                         localStorage.setItem('user', JSON.stringify(data.user));
-                        window.location.href = 'index.html';
+                        // Redirect based on role
+                        if (data.user.role === 'admin' || data.user.role === 'staff') {
+                            window.location.href = 'admin/dashboard.html';
+                        } else {
+                            window.location.href = 'index.html';
+                        }
                     } else {
                         alert('Google login failed');
                     }

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Staff | Manoj Security Solutions</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Admin CSS -->
+    <link rel="stylesheet" href="css/admin.css">
+    <script src="js/admin.js"></script>
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="#" class="sidebar-brand">
+                    <i class="fa-solid fa-shield-halved"></i> Manoj Security
+                </a>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="dashboard.html"><i class="fa-solid fa-grip"></i> Dashboard</a></li>
+                <li><a href="products.html"><i class="fa-solid fa-box"></i> Products</a></li>
+                <li><a href="services.html"><i class="fa-solid fa-screwdriver-wrench"></i> Services</a></li>
+                <li><a href="inquiries.html"><i class="fa-solid fa-envelope"></i> Inquiries</a></li>
+                <li><a href="pos.html"><i class="fa-solid fa-cash-register"></i> POS System</a></li>
+                <li><a href="invoice.html"><i class="fa-solid fa-file-invoice-dollar"></i> Invoice</a></li>
+                <li class="admin-only" style="display: none;"><a href="staff.html" class="active"><i
+                            class="fa-solid fa-users"></i> Manage Staff</a></li>
+                <li><a href="#" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div style="display: flex; align-items: center;">
+                    <div class="menu-toggle" onclick="toggleSidebar()">
+                        <i class="fa-solid fa-bars"></i>
+                    </div>
+                    <div class="page-title">
+                        <h1>Staff Management</h1>
+                    </div>
+                </div>
+                <div class="user-profile">
+                    <div class="user-info">
+                        <span class="user-name">Admin User</span>
+                        <span class="user-role">Super Admin</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="admin-section">
+                <div class="section-header-flex">
+                    <h3>Current Staff</h3>
+                    <!-- Toggle Form -->
+                    <button class="btn btn-primary"
+                        onclick="document.getElementById('addStaffForm').style.display = 'block'">
+                        <i class="fa-solid fa-plus"></i> Add New Staff
+                    </button>
+                </div>
+
+                <!-- Add Staff Form (Hidden by default) -->
+                <div id="addStaffForm"
+                    style="display: none; background: #2a3645; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <h4 style="color: white; margin-bottom: 15px;">Create Staff Credential</h4>
+                    <form onsubmit="createStaff(event)">
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input type="text" id="staffName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="staffEmail" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <input type="tel" id="staffPhone" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="text" id="staffPassword" class="form-control" required
+                                placeholder="Generate or Type Password">
+                        </div>
+                        <div style="text-align: right;">
+                            <button type="button" class="btn btn-danger btn-sm"
+                                onclick="document.getElementById('addStaffForm').style.display = 'none'">Cancel</button>
+                            <button type="submit" class="btn btn-primary btn-sm">Create Staff</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Role</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="staffTable">
+                            <!-- Staff Rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        async function loadStaff() {
+            try {
+                const res = await fetch('/api/staff');
+                const staff = await res.json();
+                const tbody = document.getElementById('staffTable');
+
+                if (staff.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No staff members found.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = staff.map(s => `
+                    <tr>
+                        <td>${s.name}</td>
+                        <td>${s.email}</td>
+                        <td>${s.phone || '-'}</td>
+                        <td><span class="status active">${s.role}</span></td>
+                        <td>
+                            <button class="action-btn delete" onclick="deleteStaff('${s._id}')" title="Delete">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function createStaff(e) {
+            e.preventDefault();
+            const data = {
+                name: document.getElementById('staffName').value,
+                email: document.getElementById('staffEmail').value,
+                phone: document.getElementById('staffPhone').value,
+                password: document.getElementById('staffPassword').value
+            };
+
+            try {
+                const res = await fetch('/api/staff', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+
+                if (result.success) {
+                    alert('Staff Created Successfully!');
+                    document.getElementById('addStaffForm').style.display = 'none';
+                    e.target.reset();
+                    loadStaff();
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            } catch (err) {
+                alert('Failed to create staff');
+            }
+        }
+
+        async function deleteStaff(id) {
+            if (!confirm('Are you sure you want to remove this staff member?')) return;
+            try {
+                await fetch('/api/staff/' + id, { method: 'DELETE' });
+                loadStaff();
+            } catch (err) {
+                alert('Error deleting staff');
+            }
+        }
+
+        loadStaff();
+    </script>
+</body>
+
+</html>

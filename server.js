@@ -188,6 +188,46 @@ app.get('/api/stats', async (req, res) => {
     }
 });
 
+// --- STAFF MANAGEMENT ---
+app.get('/api/staff', async (req, res) => {
+    try {
+        const staff = await User.find({ role: 'staff' }).select('-password');
+        res.json(staff);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/staff', async (req, res) => {
+    try {
+        const { name, email, phone, password } = req.body;
+        const existingUser = await User.findOne({ email });
+        if (existingUser) return res.status(400).json({ error: 'Email already registered' });
+
+        const newUser = new User({
+            name,
+            email,
+            phone,
+            password,
+            role: 'staff',
+            authType: 'email'
+        });
+        await newUser.save();
+        res.json({ success: true, message: 'Staff created successfully' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.delete('/api/staff/:id', async (req, res) => {
+    try {
+        await User.findByIdAndDelete(req.params.id);
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // --- AUTHENTICATION ---
 app.post('/api/auth/signup', async (req, res) => {
     try {
@@ -196,7 +236,7 @@ app.post('/api/auth/signup', async (req, res) => {
         const existingUser = await User.findOne({ email });
         if (existingUser) return res.status(400).json({ error: 'Email already registered' });
 
-        const newUser = new User({ name, email, phone, password, authType: 'email' });
+        const newUser = new User({ name, email, phone, password, authType: 'email', role: 'user' });
         await newUser.save();
 
         const { password: _, ...userWithoutPassword } = newUser.toObject();
@@ -210,11 +250,11 @@ app.post('/api/auth/login', async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Hardcoded Admin Check
-        if (email === 'admin' && password === 'admin123') {
+        // Hardcoded Admin Check (Updated)
+        if (email === 'manojr9043@gmail.com' && password === 'Manoj@007') {
             return res.json({
                 success: true,
-                user: { id: 'admin', name: 'Administrator', email: 'admin@manojsecurity.com', isAdmin: true }
+                user: { id: 'admin', name: 'Manoj', email: 'manojr9043@gmail.com', role: 'admin' }
             });
         }
 

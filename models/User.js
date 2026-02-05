@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
     authType: { type: String, default: 'email' }, // 'email' or 'google'
     googleId: String,
     picture: String,
-    isAdmin: { type: Boolean, default: false },
+    role: { type: String, enum: ['user', 'staff', 'admin'], default: 'user' },
     createdAt: { type: Date, default: Date.now }
 });
 
