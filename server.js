@@ -12,6 +12,7 @@ const Product = require('./models/Product');
 const Service = require('./models/Service');
 const Inquiry = require('./models/Inquiry');
 const User = require('./models/User');
+const Order = require('./models/Order');
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -129,6 +130,40 @@ app.delete('/api/inquiries/:id', async (req, res) => {
     try {
         await Inquiry.findByIdAndDelete(req.params.id);
         res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// --- ORDERS (POS) ---
+app.get('/api/orders', async (req, res) => {
+    try {
+        const orders = await Order.find().sort({ date: -1 });
+        res.json(orders);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/orders', async (req, res) => {
+    try {
+        const lastOrder = await Order.findOne().sort({ date: -1 });
+        let nextInvoiceNo = 'INV-001';
+        if (lastOrder && lastOrder.invoiceNo) {
+            const num = parseInt(lastOrder.invoiceNo.split('-')[1]) + 1;
+            nextInvoiceNo = 'INV-' + num.toString().padStart(3, '0');
+        }
+
+        const newOrder = new Order({
+            invoiceNo: nextInvoiceNo,
+            customerName: req.body.customerName || 'Walk-in Customer',
+            phone: req.body.phone,
+            items: req.body.items,
+            totalAmount: req.body.totalAmount,
+            paymentMethod: req.body.paymentMethod
+        });
+        await newOrder.save();
+        res.json({ success: true, order: newOrder });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POS System | Manoj Security Solutions</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Admin CSS -->
+    <link rel="stylesheet" href="css/admin.css">
+    <script>
+        // Check Authentication
+        if (!localStorage.getItem('adminLoggedIn')) {
+            window.location.href = 'index.html';
+        }
+    </script>
+    <style>
+        .pos-container {
+            display: flex;
+            gap: 20px;
+            height: calc(100vh - 100px);
+        }
+
+        .product-panel {
+            flex: 2;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .cart-panel {
+            flex: 1;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .search-bar {
+            margin-bottom: 20px;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .product-card {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .product-card:hover {
+            border-color: var(--color-primary);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-card img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin-bottom: 10px;
+        }
+
+        .product-card h4 {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            height: 40px;
+            overflow: hidden;
+        }
+
+        .product-card .price {
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+
+        .cart-items {
+            flex: 1;
+            overflow-y: auto;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 15px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f9f9f9;
+        }
+
+        .cart-item-info h5 {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        .cart-item-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .qty-btn {
+            background: #eee;
+            border: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .cart-summary {
+            margin-top: auto;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .total-row {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--color-dark);
+        }
+
+        .checkout-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .checkout-btn:disabled {
+            background: #ccc;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="#" class="sidebar-brand">
+                    <i class="fa-solid fa-shield-halved"></i> Manoj Security
+                </a>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="dashboard.html"><i class="fa-solid fa-grip"></i> Dashboard</a></li>
+                <li><a href="products.html"><i class="fa-solid fa-box"></i> Products</a></li>
+                <li><a href="services.html"><i class="fa-solid fa-screwdriver-wrench"></i> Services</a></li>
+                <li><a href="inquiries.html"><i class="fa-solid fa-envelope"></i> Inquiries</a></li>
+                <li><a href="pos.html" class="active"><i class="fa-solid fa-cash-register"></i> POS System</a></li>
+                <li><a href="invoice.html"><i class="fa-solid fa-file-invoice-dollar"></i> Invoice</a></li>
+                <li><a href="#" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div style="display: flex; align-items: center;">
+                    <div class="menu-toggle" onclick="toggleSidebar()">
+                        <i class="fa-solid fa-bars"></i>
+                    </div>
+                    <div class="page-title">
+                        <h1>Point of Sale</h1>
+                    </div>
+                </div>
+                <div class="user-profile">
+                    <span class="user-name">Admin</span>
+                </div>
+            </div>
+
+            <div class="pos-container">
+                <!-- Product Panel -->
+                <div class="product-panel">
+                    <div class="search-bar">
+                        <input type="text" id="productSearch" class="form-control" placeholder="Search products..."
+                            onkeyup="filterProducts()">
+                    </div>
+                    <div class="product-grid" id="productGrid">
+                        <!-- Products will load here -->
+                    </div>
+                </div>
+
+                <!-- Cart Panel -->
+                <div class="cart-panel">
+                    <div style="margin-bottom: 15px;">
+                        <input type="text" id="customerName" class="form-control" placeholder="Customer Name"
+                            style="margin-bottom: 10px;">
+                        <input type="text" id="customerPhone" class="form-control" placeholder="Phone Number">
+                    </div>
+
+                    <div class="cart-items" id="cartItems">
+                        <!-- Cart items -->
+                        <div style="text-align: center; color: #777; margin-top: 50px;">
+                            Cart is empty
+                        </div>
+                    </div>
+
+                    <div class="cart-summary">
+                        <div class="summary-row">
+                            <span>Subtotal</span>
+                            <span id="subtotal">₹0</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Tax (18%)</span>
+                            <span id="tax">₹0</span>
+                        </div>
+                        <div class="summary-row total-row">
+                            <span>Total</span>
+                            <span id="total">₹0</span>
+                        </div>
+
+                        <select id="paymentMethod" class="form-control" style="margin-top: 10px;">
+                            <option value="Cash">Cash</option>
+                            <option value="UPI">UPI</option>
+                            <option value="Card">Card</option>
+                        </select>
+
+                        <button class="checkout-btn" onclick="processCheckout()" id="checkoutBtn" disabled>
+                            <i class="fa-solid fa-check"></i> Complete Order
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/admin.js"></script>
+    <script>
+        let products = [];
+        let cart = [];
+
+        // Fetch Products
+        async function loadProducts() {
+            try {
+                const res = await fetch('/api/products');
+                products = await res.json();
+                renderProducts(products);
+            } catch (err) {
+                console.error("Error loading products:", err);
+            }
+        }
+
+        function renderProducts(items) {
+            const grid = document.getElementById('productGrid');
+            grid.innerHTML = items.map(p => `
+                <div class="product-card" onclick="addToCart('${p._id}', '${p.name}', '${p.price}', '${p.image}')">
+                    <img src="${p.image && !p.image.startsWith('u') ? p.image : (p.image ? '../' + p.image : 'https://via.placeholder.com/80')}" alt="${p.name}">
+                    <h4>${p.name}</h4>
+                    <div class="price">${formatPrice(p.price)}</div>
+                </div>
+            `).join('');
+        }
+
+        function formatPrice(price) {
+            if (!price) return '₹0';
+            // Handle "TBD" or non-numbers
+            const num = parseFloat(String(price).replace(/[^0-9.]/g, ''));
+            return isNaN(num) ? price : '₹' + num.toLocaleString('en-IN');
+        }
+
+        function getNumericPrice(price) {
+            const num = parseFloat(String(price).replace(/[^0-9.]/g, ''));
+            return isNaN(num) ? 0 : num;
+        }
+
+        function filterProducts() {
+            const term = document.getElementById('productSearch').value.toLowerCase();
+            const filtered = products.filter(p => p.name.toLowerCase().includes(term));
+            renderProducts(filtered);
+        }
+
+        function addToCart(id, name, price, image) {
+            const existing = cart.find(item => item.id === id);
+            const numPrice = getNumericPrice(price);
+
+            if (numPrice === 0) {
+                // Prompt for price if TBD/Zero
+                const newPrice = prompt(`Enter price for ${name}:`);
+                if (!newPrice) return;
+                price = newPrice;
+            }
+
+            if (existing) {
+                existing.quantity++;
+            } else {
+                cart.push({
+                    id,
+                    name,
+                    price: getNumericPrice(price),
+                    image,
+                    quantity: 1
+                });
+            }
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const container = document.getElementById('cartItems');
+
+            if (cart.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: #777; margin-top: 50px;">Cart is empty</div>';
+                document.getElementById('checkoutBtn').disabled = true;
+                updateTotals();
+                return;
+            }
+
+            document.getElementById('checkoutBtn').disabled = false;
+
+            container.innerHTML = cart.map((item, index) => `
+                <div class="cart-item">
+                    <div class="cart-item-info">
+                        <h5>${item.name}</h5>
+                        <div style="font-size: 0.8rem; color: #777;">₹${item.price} x ${item.quantity}</div>
+                    </div>
+                    <div class="cart-item-controls">
+                        <span style="font-weight: 600;">₹${item.price * item.quantity}</span>
+                        <button class="qty-btn" onclick="changeQty(${index}, -1)">-</button>
+                        <span>${item.quantity}</span>
+                        <button class="qty-btn" onclick="changeQty(${index}, 1)">+</button>
+                        <i class="fa-solid fa-trash" style="color: red; cursor: pointer; margin-left: 5px;" onclick="removeFromCart(${index})"></i>
+                    </div>
+                </div>
+            `).join('');
+
+            updateTotals();
+        }
+
+        function changeQty(index, change) {
+            cart[index].quantity += change;
+            if (cart[index].quantity <= 0) {
+                cart.splice(index, 1);
+            }
+            updateCartUI();
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        function updateTotals() {
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const tax = subtotal * 0.18;
+            const total = subtotal + tax;
+
+            document.getElementById('subtotal').innerText = '₹' + subtotal.toLocaleString('en-IN');
+            document.getElementById('tax').innerText = '₹' + tax.toLocaleString('en-IN');
+            document.getElementById('total').innerText = '₹' + total.toLocaleString('en-IN');
+        }
+
+        async function processCheckout() {
+            const customer = document.getElementById('customerName').value;
+            const phone = document.getElementById('customerPhone').value;
+            const method = document.getElementById('paymentMethod').value;
+
+            if (!customer) {
+                alert('Please enter customer name');
+                return;
+            }
+
+            const btn = document.getElementById('checkoutBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            const orderData = {
+                customerName: customer,
+                phone: phone,
+                items: cart.map(i => ({
+                    productId: i.id,
+                    name: i.name,
+                    price: i.price,
+                    quantity: i.quantity,
+                    total: i.price * i.quantity
+                })),
+                totalAmount: subtotal + (subtotal * 0.18),
+                paymentMethod: method
+            };
+
+            try {
+                const res = await fetch('/api/orders', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orderData)
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    alert('Order Completed! Invoice: ' + data.order.invoiceNo);
+                    cart = [];
+                    updateCartUI();
+                    document.getElementById('customerName').value = '';
+                    document.getElementById('customerPhone').value = '';
+                    // Optionally ask to print invoice
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Checkout failed');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Complete Order';
+            }
+        }
+
+        loadProducts();
+    </script>
+
+</body>
+
+</html>
