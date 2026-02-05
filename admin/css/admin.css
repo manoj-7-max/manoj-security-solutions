@@ -397,6 +397,22 @@ tr:hover {
 
     .user-info {
         display: none;
-        /* Hide name on mobile to save space */
+    }
+
+    /* POS Mobile Fixes */
+    .pos-container {
+        flex-direction: column;
+        height: auto !important;
+    }
+
+    .product-panel {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .cart-panel {
+        position: relative;
+        z-index: 10;
+        border-top: 3px solid var(--color-primary);
     }
 }
