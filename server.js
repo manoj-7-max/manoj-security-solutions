@@ -12,10 +12,25 @@ const Product = require('./models/Product');
 const Service = require('./models/Service');
 const Inquiry = require('./models/Inquiry');
 const User = require('./models/User');
+const Inquiry = require('./models/Inquiry');
+const User = require('./models/User');
 const Order = require('./models/Order');
+const nodemailer = require('nodemailer');
 
 const app = express();
 const PORT = process.env.PORT || 8000;
+
+// OTP Store (Temporary)
+const otpStore = new Map();
+
+// Email Transporter
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER, // Set in Render
+        pass: process.env.EMAIL_PASS  // Set in Render
+    }
+});
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/manoj_security')
@@ -222,6 +237,49 @@ app.post('/api/staff', async (req, res) => {
 app.delete('/api/staff/:id', async (req, res) => {
     try {
         await User.findByIdAndDelete(req.params.id);
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// --- PASSWORD RESET ---
+app.post('/api/auth/forgot-password', async (req, res) => {
+    const { email } = req.body;
+    try {
+        const user = await User.findOne({ email });
+        if (!user) return res.status(404).json({ error: 'Email not found' });
+
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        otpStore.set(email, { otp, expires: Date.now() + 600000 }); // 10 mins
+
+        // Send Email
+        await transporter.sendMail({
+            from: process.env.EMAIL_USER,
+            to: email,
+            subject: 'Password Reset OTP - Manoj Security Solutions',
+            text: `Your OTP for password reset is: ${otp}\n\nThis OTP is valid for 10 minutes.\nDo not share this with anyone.`
+        });
+
+        res.json({ success: true });
+    } catch (err) {
+        console.error("Email Error:", err);
+        res.status(500).json({ error: 'Failed to send OTP. Check server logs.' });
+    }
+});
+
+app.post('/api/auth/reset-password', async (req, res) => {
+    const { email, otp, password } = req.body;
+    const stored = otpStore.get(email);
+
+    if (!stored || stored.otp !== otp || stored.expires < Date.now()) {
+        return res.status(400).json({ error: 'Invalid or Expired OTP' });
+    }
+
+    try {
+        // Update Password (Plain-text as per current system)
+        await User.findOneAndUpdate({ email }, { password });
+        otpStore.delete(email);
         res.json({ success: true });
     } catch (err) {
         res.status(500).json({ error: err.message });
