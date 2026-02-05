@@ -701,7 +701,7 @@ textarea.form-control {
 
 /* Responsive */
 @media (max-width: 768px) {
-    .header .btn-outline {
+    .header-right>a.btn-outline {
         display: none;
         /* Hide call button on smaller headers to save space */
     }
