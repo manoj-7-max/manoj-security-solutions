@@ -1,332 +1,240 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const mongoose = require('mongoose');
+
+// Import Models
+const Product = require('./models/Product');
+const Service = require('./models/Service');
+const Inquiry = require('./models/Inquiry');
+const User = require('./models/User');
 
 const app = express();
 const PORT = process.env.PORT || 8000;
+
+// Connect to MongoDB
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/manoj_security')
+    .then(() => console.log('✅ Connected to MongoDB'))
+    .catch(err => console.error('❌ MongoDB Connection Error:', err));
 
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, '/'))); // Serve static files from root for now
+app.use(express.static(path.join(__dirname, '/')));
 
 // Ensure uploads directory exists
 if (!fs.existsSync('uploads')) {
     fs.mkdirSync('uploads');
 }
 
-// Configure Multer for image uploads
+// Configure Multer
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'uploads/')
     },
     filename: function (req, file, cb) {
-        cb(null, Date.now() + path.extname(file.originalname)) // Append extension
+        cb(null, Date.now() + path.extname(file.originalname))
     }
 });
 const upload = multer({ storage: storage });
 
-// Helper to read/write JSON
-const DATA_DIR = path.join(__dirname, 'data');
-const readData = (file) => {
+// ========== API ROUTES ==========
+
+// --- PRODUCTS ---
+app.get('/api/products', async (req, res) => {
     try {
-        const data = fs.readFileSync(path.join(DATA_DIR, file));
-        return JSON.parse(data);
+        const products = await Product.find().sort({ createdAt: -1 });
+        res.json(products);
     } catch (err) {
-        return [];
-    }
-};
-
-const writeData = (file, data) => {
-    fs.writeFileSync(path.join(DATA_DIR, file), JSON.stringify(data, null, 2));
-};
-
-// --- API Endpoints ---
-
-// Products
-app.get('/api/products', (req, res) => {
-    res.json(readData('products.json'));
-});
-
-app.post('/api/products', upload.single('image'), (req, res) => {
-    try {
-        console.log('Received Add Product Request');
-        console.log('Body:', req.body);
-        console.log('File:', req.file);
-
-        const products = readData('products.json');
-        const newProduct = {
-            id: Date.now(),
-            name: req.body.name,
-            category: req.body.category,
-            price: req.body.price || "TBD",
-            description: req.body.description,
-            icon: req.body.icon || 'fa-solid fa-box',
-            image: req.file ? `/uploads/${req.file.filename}` : null
-        };
-        products.push(newProduct);
-        writeData('products.json', products);
-        console.log('Product added successfully:', newProduct);
-        res.json(newProduct);
-    } catch (err) {
-        console.error('Error adding product:', err);
         res.status(500).json({ error: err.message });
     }
 });
 
-app.delete('/api/products/:id', (req, res) => {
-    let products = readData('products.json');
-    products = products.filter(p => p.id != req.params.id);
-    writeData('products.json', products);
-    res.json({ success: true });
-});
-
-// Services
-app.get('/api/services', (req, res) => {
-    res.json(readData('services.json'));
-});
-
-app.post('/api/services', upload.single('image'), (req, res) => {
-    const services = readData('services.json');
-    const newService = {
-        id: Date.now(),
-        name: req.body.name,
-        description: req.body.description,
-        icon: req.body.icon || 'fa-solid fa-screwdriver-wrench',
-        image: req.file ? `/uploads/${req.file.filename}` : null,
-        features: req.body.features ? req.body.features.split(',') : []
-    };
-    services.push(newService);
-    writeData('services.json', services);
-    res.json(newService);
-});
-
-app.delete('/api/services/:id', (req, res) => {
-    let services = readData('services.json');
-    services = services.filter(s => s.id != req.params.id);
-    writeData('services.json', services);
-    res.json({ success: true });
-});
-
-// Inquiries
-app.get('/api/inquiries', (req, res) => {
-    res.json(readData('inquiries.json'));
-});
-
-app.post('/api/inquiries', (req, res) => {
+app.post('/api/products', upload.single('image'), async (req, res) => {
     try {
-        const inquiries = readData('inquiries.json');
-        const newInquiry = {
-            id: Date.now(),
+        const newProduct = new Product({
+            name: req.body.name,
+            category: req.body.category,
+            description: req.body.description,
+            price: req.body.price,
+            icon: req.body.icon,
+            image: req.file ? 'uploads/' + req.file.filename : null
+        });
+        await newProduct.save();
+        res.json(newProduct);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.delete('/api/products/:id', async (req, res) => {
+    try {
+        await Product.findByIdAndDelete(req.params.id);
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// --- SERVICES ---
+app.get('/api/services', async (req, res) => {
+    try {
+        const services = await Service.find();
+        res.json(services);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// --- INQUIRIES ---
+app.get('/api/inquiries', async (req, res) => {
+    try {
+        const inquiries = await Inquiry.find().sort({ date: -1 });
+        res.json(inquiries);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/inquiries', async (req, res) => {
+    try {
+        const newInquiry = new Inquiry({
             name: req.body.name,
             phone: req.body.phone,
             service: req.body.service,
-            message: req.body.message,
-            date: new Date().toISOString(),
-            status: 'New'
-        };
-        inquiries.unshift(newInquiry); // Add to top
-        writeData('inquiries.json', inquiries);
-        res.json(newInquiry);
+            message: req.body.message
+        });
+        await newInquiry.save();
+        res.json({ success: true, inquiry: newInquiry });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
 
-app.put('/api/inquiries/:id', (req, res) => {
+app.put('/api/inquiries/:id', async (req, res) => {
     try {
-        let inquiries = readData('inquiries.json');
-        const index = inquiries.findIndex(i => i.id == req.params.id);
-        if (index !== -1) {
-            inquiries[index].status = req.body.status;
-            writeData('inquiries.json', inquiries);
-            res.json({ success: true, inquiry: inquiries[index] });
-        } else {
-            res.status(404).json({ error: "Inquiry not found" });
-        }
+        await Inquiry.findByIdAndUpdate(req.params.id, { status: req.body.status });
+        res.json({ success: true });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
 
-app.delete('/api/inquiries/:id', (req, res) => {
-    let inquiries = readData('inquiries.json');
-    inquiries = inquiries.filter(i => i.id != req.params.id);
-    writeData('inquiries.json', inquiries);
-    res.json({ success: true });
+app.delete('/api/inquiries/:id', async (req, res) => {
+    try {
+        await Inquiry.findByIdAndDelete(req.params.id);
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
-// Stats
-app.get('/api/stats', (req, res) => {
+// --- DASHBOARD STATS ---
+app.get('/api/stats', async (req, res) => {
     try {
-        const products = readData('products.json');
-        const inquiries = readData('inquiries.json');
-        const services = readData('services.json');
-
-        const newInquiries = inquiries.filter(i => i.status === 'New').length; // Or just total length logic
-        const pendingInquiries = inquiries.filter(i => i.status === 'Pending').length;
+        const inquiryCount = await Inquiry.countDocuments();
+        const pendingCount = await Inquiry.countDocuments({ status: 'Pending' });
+        const productCount = await Product.countDocuments();
+        const serviceCount = await Service.countDocuments();
 
         res.json({
-            products: products.length,
-            services: services.length,
-            inquiries: inquiries.length,
-            newInquiries: newInquiries,
-            pending: pendingInquiries
+            inquiries: inquiryCount,
+            pending: pendingCount,
+            products: productCount,
+            services: serviceCount
         });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
 
-// Contact (Mock for now, could act as settings)
-app.get('/api/contact', (req, res) => {
-    // Return existing contact info or default
-    const config = {
-        phone: "+919944305980",
-        email: "info@manojsecurity.com",
-        address: "Tamil Nadu, India"
-    };
-    res.json(config);
-});
-
-
-// Fallback for form submission (HTML)
-app.post('/contact.html', (req, res) => {
+// --- AUTHENTICATION ---
+app.post('/api/auth/signup', async (req, res) => {
     try {
-        const inquiries = readData('inquiries.json');
-        const newInquiry = {
-            id: Date.now(),
-            name: req.body.name,
-            phone: req.body.phone,
-            service: req.body.service,
-            message: req.body.message,
-            date: new Date().toISOString(),
-            status: 'New'
-        };
-        inquiries.unshift(newInquiry);
-        writeData('inquiries.json', inquiries);
-
-        // Redirect back with success param
-        res.redirect('/contact.html?status=success');
-    } catch (err) {
-        res.status(500).send("Error submitting form");
-    }
-});
-
-// ========== AUTHENTICATION ROUTES ==========
-
-// User Signup
-app.post('/api/auth/signup', (req, res) => {
-    try {
-        const users = readData('users.json');
         const { name, email, phone, password } = req.body;
 
-        // Check if user already exists
-        if (users.find(u => u.email === email)) {
-            return res.status(400).json({ error: 'Email already registered' });
-        }
+        const existingUser = await User.findOne({ email });
+        if (existingUser) return res.status(400).json({ error: 'Email already registered' });
 
-        const newUser = {
-            id: Date.now(),
-            name,
-            email,
-            phone,
-            password, // In production, hash this with bcrypt
-            authType: 'email',
-            createdAt: new Date().toISOString()
-        };
+        const newUser = new User({ name, email, phone, password, authType: 'email' });
+        await newUser.save();
 
-        users.push(newUser);
-        writeData('users.json', users);
-
-        // Return user without password
-        const { password: _, ...userWithoutPassword } = newUser;
+        const { password: _, ...userWithoutPassword } = newUser.toObject();
         res.json({ success: true, user: userWithoutPassword });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
 
-// User Login
-app.post('/api/auth/login', (req, res) => {
+app.post('/api/auth/login', async (req, res) => {
     try {
-        const users = readData('users.json');
         const { email, password } = req.body;
 
-        // Check for hardcoded admin
+        // Hardcoded Admin Check
         if (email === 'admin' && password === 'admin123') {
             return res.json({
                 success: true,
-                user: {
-                    id: 'admin',
-                    name: 'Administrator',
-                    email: 'admin@manojsecurity.com',
-                    isAdmin: true
-                }
+                user: { id: 'admin', name: 'Administrator', email: 'admin@manojsecurity.com', isAdmin: true }
             });
         }
 
-        const user = users.find(u => u.email === email && u.password === password);
+        const user = await User.findOne({ email, password });
+        if (!user) return res.status(401).json({ error: 'Invalid credentials' });
 
-        if (!user) {
-            return res.status(401).json({ error: 'Invalid email or password' });
-        }
-
-        // Return user without password
-        const { password: _, ...userWithoutPassword } = user;
+        const { password: _, ...userWithoutPassword } = user.toObject();
         res.json({ success: true, user: userWithoutPassword });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
 
-// Google Authentication
 app.post('/api/auth/google', async (req, res) => {
     try {
         const { credential } = req.body;
-
-        // Decode JWT token (basic implementation)
-        // In production, verify with Google's API
         const base64Url = credential.split('.')[1];
         const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
         const payload = JSON.parse(Buffer.from(base64, 'base64').toString());
 
-        const users = readData('users.json');
-        let user = users.find(u => u.email === payload.email);
-
+        let user = await User.findOne({ email: payload.email });
         if (!user) {
-            // Create new user from Google data
-            user = {
-                id: Date.now(),
+            user = new User({
                 name: payload.name,
                 email: payload.email,
-                phone: '',
                 authType: 'google',
                 googleId: payload.sub,
-                picture: payload.picture,
-                createdAt: new Date().toISOString()
-            };
-            users.push(user);
-            writeData('users.json', users);
+                picture: payload.picture
+            });
+            await user.save();
         }
-
         res.json({ success: true, user });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
 
-// Get current user info
-app.get('/api/auth/me', (req, res) => {
-    // In production, verify JWT token from headers
-    res.json({ user: null }); // Placeholder
+// Fallback for HTML Form
+app.post('/contact.html', async (req, res) => {
+    try {
+        const newInquiry = new Inquiry({
+            name: req.body.name,
+            phone: req.body.phone,
+            service: req.body.service,
+            message: req.body.message
+        });
+        await newInquiry.save();
+        res.redirect('/contact.html?status=success');
+    } catch (err) {
+        res.status(500).send("Error submitting form");
+    }
 });
 
 // Start Server
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
+    console.log(`Using MongoDB`);
 });
