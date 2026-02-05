@@ -252,6 +252,19 @@ app.post('/api/auth/login', (req, res) => {
         const users = readData('users.json');
         const { email, password } = req.body;
 
+        // Check for hardcoded admin
+        if (email === 'admin' && password === 'admin123') {
+            return res.json({
+                success: true,
+                user: {
+                    id: 'admin',
+                    name: 'Administrator',
+                    email: 'admin@manojsecurity.com',
+                    isAdmin: true
+                }
+            });
+        }
+
         const user = users.find(u => u.email === email && u.password === password);
 
         if (!user) {
