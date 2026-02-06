@@ -3,101 +3,15 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login | Manoj Security Solutions</title>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Admin CSS -->
-    <link rel="stylesheet" href="css/admin.css">
+    <meta http-equiv="refresh" content="0; url=../login.html">
+    <title>Redirecting...</title>
+    <script>
+        window.location.href = "../login.html";
+    </script>
 </head>
 
 <body>
-
-    <div class="login-container">
-        <div class="login-box">
-            <div class="logo" style="justify-content: center; margin-bottom: 20px;">
-                <i class="fa-solid fa-shield-halved" style="color: var(--color-primary); font-size: 2rem;"></i>
-            </div>
-            <h2>Admin Login</h2>
-            <form id="loginForm">
-                <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" class="form-control" placeholder="Enter username" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" class="form-control" placeholder="Enter password" required>
-                </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">Login</button>
-            </form>
-            <p id="error-msg" style="color: var(--color-danger); margin-top: 15px; display: none;">Invalid credentials
-            </p>
-            <div style="margin-top: 20px;">
-                <a href="../index.html" style="font-size: 0.9rem; color: #777;">Back to Website</a>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Check if user is already logged in as admin
-        const currentUser = JSON.parse(localStorage.getItem('user'));
-        if (currentUser && currentUser.email === 'admin@manojsecurity.com') {
-            localStorage.setItem('adminLoggedIn', 'true');
-            window.location.href = 'dashboard.html';
-        }
-
-        document.getElementById('loginForm').addEventListener('submit', async function (e) {
-            e.preventDefault();
-            const user = document.getElementById('username').value;
-            const pass = document.getElementById('password').value;
-            const errorMsg = document.getElementById('error-msg');
-            const btn = this.querySelector('button');
-
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Logging in...';
-
-            // Check for default admin credentials
-            if (user === 'admin' && pass === 'admin123') {
-                localStorage.setItem('adminLoggedIn', 'true');
-                window.location.href = 'dashboard.html';
-                return;
-            }
-
-            // Check against user database via API
-            try {
-                const res = await fetch('/api/auth/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: user, password: pass })
-                });
-
-                const result = await res.json();
-
-                if (res.ok && result.user) {
-                    // Check if user is admin (you can add admin flag to users)
-                    if (result.user.email === 'admin@manojsecurity.com' || result.user.isAdmin) {
-                        localStorage.setItem('adminLoggedIn', 'true');
-                        localStorage.setItem('user', JSON.stringify(result.user));
-                        window.location.href = 'dashboard.html';
-                    } else {
-                        errorMsg.innerText = 'Access denied. Admin privileges required.';
-                        errorMsg.style.display = 'block';
-                    }
-                } else {
-                    errorMsg.innerText = 'Invalid credentials';
-                    errorMsg.style.display = 'block';
-                }
-            } catch (err) {
-                errorMsg.innerText = 'Login failed. Using default admin credentials only.';
-                errorMsg.style.display = 'block';
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = 'Login';
-            }
-        });
-    </script>
+    <p>Redirecting to <a href="../login.html">Login Page</a>...</p>
 </body>
 
 </html>
