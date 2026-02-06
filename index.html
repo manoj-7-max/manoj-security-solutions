@@ -271,41 +271,7 @@
     </a>
 
     <script src="js/script.js"></script>
-    <script>
-        // Check authentication status
-        function checkAuth() {
-            const user = JSON.parse(localStorage.getItem('user'));
-            if (user) {
-                document.getElementById('authButtons').style.display = 'none';
-                document.getElementById('userMenu').style.display = 'block';
-                document.getElementById('userName').innerText = user.name.split(' ')[0];
-            } else {
-                document.getElementById('authButtons').style.display = 'block';
-                document.getElementById('userMenu').style.display = 'none';
-            }
-        }
 
-        function toggleUserDropdown() {
-            const dropdown = document.getElementById('userDropdown');
-            dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
-        }
-
-        function logout() {
-            localStorage.removeItem('user');
-            window.location.reload();
-        }
-
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function (event) {
-            const userMenu = document.getElementById('userMenu');
-            const dropdown = document.getElementById('userDropdown');
-            if (!userMenu.contains(event.target)) {
-                dropdown.style.display = 'none';
-            }
-        });
-
-        checkAuth();
-    </script>
 </body>
 
 </html>

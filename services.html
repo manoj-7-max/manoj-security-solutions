@@ -33,7 +33,29 @@
                 </ul>
             </nav>
             <div class="header-right">
-                <a href="tel:+919876543210" class="btn btn-outline"><i class="fa-solid fa-phone"></i> Call Now</a>
+                <div id="authButtons" style="display: none;">
+                    <a href="login.html" class="btn btn-outline" style="margin-right: 10px;">
+                        <i class="fa-solid fa-sign-in-alt"></i> Login
+                    </a>
+                    <a href="signup.html" class="btn btn-primary">
+                        <i class="fa-solid fa-user-plus"></i> Sign Up
+                    </a>
+                </div>
+                <div id="userMenu" style="display: none; position: relative;">
+                    <button onclick="toggleUserDropdown()" class="btn btn-outline"
+                        style="background: var(--color-primary-dark); color: white;">
+                        <i class="fa-solid fa-user"></i> <span id="userName">User</span>
+                    </button>
+                    <div id="userDropdown"
+                        style="display: none; position: absolute; right: 0; top: 50px; background: #1f2833; border-radius: 8px; padding: 10px; min-width: 150px; box-shadow: 0 5px 20px rgba(0,0,0,0.5); z-index: 1000;">
+                        <a href="#" onclick="logout()"
+                            style="display: block; padding: 8px; color: white; text-decoration: none;">
+                            <i class="fa-solid fa-sign-out-alt"></i> Logout
+                        </a>
+                    </div>
+                </div>
+                <a href="tel:+919876543210" class="btn btn-outline" style="margin-left: 10px;"><i
+                        class="fa-solid fa-phone"></i> Call Now</a>
                 <div class="hamburger" id="hamburger">
                     <span></span>
                     <span></span>
@@ -86,8 +108,7 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2024 Manoj Security Solutions – All Rights Reserved. <a href="admin/index.html"
-                    style="color: #444; font-size: 0.8rem; text-decoration: none; margin-left: 10px;">Admin</a></p>
+            <p>&copy; 2024 Manoj Security Solutions – All Rights Reserved.</p>
         </div>
     </footer>
 
