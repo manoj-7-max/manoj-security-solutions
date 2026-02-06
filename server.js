@@ -32,7 +32,8 @@ const transporter = nodemailer.createTransport({
 
 // Debug Log
 console.log("Manoj Security Server Starting...");
-console.log("Email Configured:", process.env.EMAIL_USER ? "YES" : "NO");
+console.log("Environment Keys Available:", Object.keys(process.env).join(', '));
+console.log("EMAIL_USER Value Set:", process.env.EMAIL_USER ? "YES (Len: " + process.env.EMAIL_USER.length + ")" : "NO");
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/manoj_security')
@@ -104,6 +105,38 @@ app.get('/api/services', async (req, res) => {
     try {
         const services = await Service.find();
         res.json(services);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/services', upload.single('image'), async (req, res) => {
+    try {
+        let features = req.body.features;
+        if (typeof features === 'string') {
+            // Try parsing JSON, otherwise treat as single item or comma separated?
+            // Let's assume JSON string from frontend or just array if multiple inputs
+            try { features = JSON.parse(features); } catch (e) { features = [features]; }
+        }
+
+        const newService = new Service({
+            name: req.body.name,
+            description: req.body.description,
+            icon: req.body.icon,
+            features: features || [],
+            image: req.file ? 'uploads/' + req.file.filename : null
+        });
+        await newService.save();
+        res.json(newService);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.delete('/api/services/:id', async (req, res) => {
+    try {
+        await Service.findByIdAndDelete(req.params.id);
+        res.json({ success: true });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

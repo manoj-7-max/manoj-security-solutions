@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 
 const serviceSchema = new mongoose.Schema({
-    id: { type: String, required: true }, // Keeping custom ID for now
-    title: { type: String, required: true },
-    icon: String,
+    name: { type: String, required: true },
+    icon: { type: String, default: 'fa-solid fa-screwdriver-wrench' },
     description: String,
-    details: [String] // Array of bullet points
+    features: [String], // Array of strings
+    image: String // Optional image
 });
 
 module.exports = mongoose.model('Service', serviceSchema);
