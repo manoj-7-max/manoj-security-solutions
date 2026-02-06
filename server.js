@@ -291,7 +291,11 @@ app.delete('/api/staff/:id', async (req, res) => {
 app.post('/api/auth/forgot-password', async (req, res) => {
     const { email } = req.body;
 
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    // Check for either SMTP credentials OR Legacy Gmail credentials
+    const hasCreds = (process.env.SMTP_USER && process.env.SMTP_PASS) ||
+        (process.env.EMAIL_USER && process.env.EMAIL_PASS);
+
+    if (!hasCreds) {
         return res.status(500).json({ error: 'Server Error: Email system not configured. Contact Admin.' });
     }
 
