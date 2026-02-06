@@ -21,19 +21,19 @@ const PORT = process.env.PORT || 8000;
 // OTP Store (Temporary)
 const otpStore = new Map();
 
-// Email Transporter (Raw SMTP with Timeouts)
+// Email Transporter (Generic SMTP)
 const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 587,
-    secure: false,
+    host: process.env.SMTP_HOST || 'smtp.gmail.com',
+    port: parseInt(process.env.SMTP_PORT) || 587,
+    secure: process.env.SMTP_SECURE === 'true', // true for 465, false for other ports
     auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
+        user: process.env.SMTP_USER || process.env.EMAIL_USER,
+        pass: process.env.SMTP_PASS || process.env.EMAIL_PASS
     },
     tls: {
         rejectUnauthorized: false
     },
-    connectionTimeout: 10000, // 10s timeout
+    connectionTimeout: 10000,
     greetingTimeout: 5000,
     socketTimeout: 10000
 });
@@ -41,7 +41,8 @@ const transporter = nodemailer.createTransport({
 // Debug Log
 console.log("Manoj Security Server Starting...");
 console.log("Environment Keys Available:", Object.keys(process.env).join(', '));
-console.log("EMAIL_USER Value Set:", process.env.EMAIL_USER ? "YES (Len: " + process.env.EMAIL_USER.length + ")" : "NO");
+const emailKey = process.env.SMTP_USER || process.env.EMAIL_USER;
+console.log("Email User Set:", emailKey ? "YES (Len: " + emailKey.length + ")" : "NO");
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/manoj_security')
