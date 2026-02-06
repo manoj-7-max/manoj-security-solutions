@@ -307,7 +307,8 @@ app.post('/api/auth/forgot-password', async (req, res) => {
         res.json({ success: true });
     } catch (err) {
         console.error("Email Error:", err);
-        res.status(500).json({ error: 'Failed to send OTP. Check server logs.' });
+        // Returns detailed error to Frontend for debugging
+        res.status(500).json({ error: 'Email Failed: ' + err.message });
     }
 });
 
