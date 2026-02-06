@@ -3,15 +3,12 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(response => response.json())
         .then(services => {
             const container = document.querySelector('.services-list .container');
-            // Keep the header or recreate it? The current layout has alternating rows manually.
-            // We'll clear the custom rows but keep the first child (if it's not a service row).
-            // Actually the current HTML structure has service-row inside .container directly.
-
-            // To be safe and clean, let's just clear the container and re-add the data.
-            // Wait, there might be other sections in .container?
-            // In services.html, .services-list .container contains multiple .service-row divs.
-
             container.innerHTML = '';
+
+            if (services.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: #aaa; padding: 50px;"><h3>No Services Listed Yet.</h3></div>';
+                return;
+            }
 
             services.forEach((service, index) => {
                 const isReverse = index % 2 !== 0 ? 'reverse' : '';
@@ -61,5 +58,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 container.innerHTML += row;
             });
         })
-        .catch(err => console.error('Error loading services:', err));
+        .catch(err => {
+            console.error('Error loading services:', err);
+            document.querySelector('.services-list .container').innerHTML = '<div style="text-align: center; color: #ff4d4d; padding: 50px;"><h3>Failed to Load Services</h3></div>';
+        });
 });

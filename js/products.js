@@ -5,6 +5,11 @@ document.addEventListener('DOMContentLoaded', function () {
             const container = document.querySelector('.products-grid');
             container.innerHTML = ''; // Clear loading/static content
 
+            if (products.length === 0) {
+                container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #aaa; padding: 50px;"><h3>No Products Available Yet.</h3><p>Please check back later.</p></div>';
+                return;
+            }
+
             products.forEach(product => {
                 // Determine image/icon display
                 let imageHtml = '';
@@ -33,7 +38,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 container.innerHTML += card;
             });
         })
-        .catch(err => console.error('Error loading products:', err));
+        .catch(err => {
+            console.error('Error loading products:', err);
+            document.querySelector('.products-grid').innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #ff4d4d;"><h3>Failed to Load Products</h3><p>Please try again later.</p></div>';
+        });
 });
 
 // Cart Logic
@@ -44,9 +52,9 @@ function addToCart(productName, btnElement) {
         cart.push(productName);
         localStorage.setItem('enquiryCart', JSON.stringify(cart));
         updateCartUI();
-        
+
         // Button Feedback
-        if(btnElement) {
+        if (btnElement) {
             const originalText = btnElement.innerText;
             btnElement.innerText = 'Added!';
             btnElement.style.background = '#2ecc71';
@@ -59,7 +67,7 @@ function addToCart(productName, btnElement) {
         }
     } else {
         // Optional: Shake animation or distinct feedback
-        if(btnElement) {
+        if (btnElement) {
             btnElement.innerText = 'In Cart';
             setTimeout(() => btnElement.innerText = 'Add to Cart', 1000);
         }
