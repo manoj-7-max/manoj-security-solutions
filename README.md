@@ -82,8 +82,8 @@ To enable Google Sign-In:
    - Go to "APIs & Services" → "Credentials"
    - Click "Create Credentials" → "OAuth client ID"
    - Choose "Web application"
-   - Add authorized origins: `http://localhost:8000`
-   - Add redirect URIs: `http://localhost:8000/login.html`, `http://localhost:8000/signup.html`
+   - Add redirect UR   - Add authorized origins: `http://localhost:8000`
+Is: `http://localhost:8000/login.html`, `http://localhost:8000/signup.html`
 
 4. **Update Client ID**
    - Copy your Client ID

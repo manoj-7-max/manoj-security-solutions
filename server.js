@@ -12,8 +12,6 @@ const Product = require('./models/Product');
 const Service = require('./models/Service');
 const Inquiry = require('./models/Inquiry');
 const User = require('./models/User');
-const Inquiry = require('./models/Inquiry');
-const User = require('./models/User');
 const Order = require('./models/Order');
 const nodemailer = require('nodemailer');
 
