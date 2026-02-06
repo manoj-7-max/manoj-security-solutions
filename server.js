@@ -21,19 +21,21 @@ const PORT = process.env.PORT || 8000;
 // OTP Store (Temporary)
 const otpStore = new Map();
 
-// Email Transporter (Compatibility Mode)
+// Email Transporter (Raw SMTP with Timeouts)
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
     host: 'smtp.gmail.com',
     port: 587,
-    secure: false, // Use TLS
+    secure: false,
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
     },
     tls: {
         rejectUnauthorized: false
-    }
+    },
+    connectionTimeout: 10000, // 10s timeout
+    greetingTimeout: 5000,
+    socketTimeout: 10000
 });
 
 // Debug Log
@@ -299,6 +301,7 @@ app.post('/api/auth/forgot-password', async (req, res) => {
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         otpStore.set(email, { otp, expires: Date.now() + 600000 }); // 10 mins
 
+        console.log("Preparing to send email to:", email);
         // Send Email
         await transporter.sendMail({
             from: process.env.EMAIL_USER,
@@ -306,6 +309,7 @@ app.post('/api/auth/forgot-password', async (req, res) => {
             subject: 'Password Reset OTP - Manoj Security Solutions',
             text: `Your OTP for password reset is: ${otp}\n\nThis OTP is valid for 10 minutes.\nDo not share this with anyone.`
         });
+        console.log("Email sent successfully!");
 
         res.json({ success: true });
     } catch (err) {
