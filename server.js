@@ -21,12 +21,15 @@ const PORT = process.env.PORT || 8000;
 // OTP Store (Temporary)
 const otpStore = new Map();
 
-// Email Transporter
+// Email Transporter (Optimized)
 const transporter = nodemailer.createTransport({
     service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
     auth: {
-        user: process.env.EMAIL_USER, // Set in Render
-        pass: process.env.EMAIL_PASS  // Set in Render
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
     }
 });
 
