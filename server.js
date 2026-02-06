@@ -246,6 +246,11 @@ app.delete('/api/staff/:id', async (req, res) => {
 // --- PASSWORD RESET ---
 app.post('/api/auth/forgot-password', async (req, res) => {
     const { email } = req.body;
+
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+        return res.status(500).json({ error: 'Server Error: Email system not configured. Contact Admin.' });
+    }
+
     try {
         const user = await User.findOne({ email });
         if (!user) return res.status(404).json({ error: 'Email not found' });
@@ -306,10 +311,13 @@ app.post('/api/auth/signup', async (req, res) => {
 
 app.post('/api/auth/login', async (req, res) => {
     try {
-        const { email, password } = req.body;
+        let { email, password } = req.body;
+        email = email.trim();
+        // password = password.trim(); // Don't trim password usually, but for simple hardcoded check maybe?
 
         // Hardcoded Admin Check (Updated)
         if (email === 'manojr9043@gmail.com' && password === 'Manoj@007') {
+            const token = 'admin-token'; // In real app use JWT
             return res.json({
                 success: true,
                 user: { id: 'admin', name: 'Manoj', email: 'manojr9043@gmail.com', role: 'admin' }
