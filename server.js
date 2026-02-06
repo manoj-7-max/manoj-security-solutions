@@ -30,6 +30,10 @@ const transporter = nodemailer.createTransport({
     }
 });
 
+// Debug Log
+console.log("Manoj Security Server Starting...");
+console.log("Email Configured:", process.env.EMAIL_USER ? "YES" : "NO");
+
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/manoj_security')
     .then(() => console.log('✅ Connected to MongoDB'))
