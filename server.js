@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const multer = require('multer');
+const { Resend } = require('resend');
 const path = require('path');
 const fs = require('fs');
 const mongoose = require('mongoose');
@@ -308,13 +309,29 @@ app.post('/api/auth/forgot-password', async (req, res) => {
         otpStore.set(email, { otp, expires: Date.now() + 600000 }); // 10 mins
 
         console.log("Preparing to send email to:", email);
-        // Send Email
-        await transporter.sendMail({
-            from: process.env.EMAIL_USER,
-            to: email,
-            subject: 'Password Reset OTP - Manoj Security Solutions',
-            text: `Your OTP for password reset is: ${otp}\n\nThis OTP is valid for 10 minutes.\nDo not share this with anyone.`
-        });
+
+        // Use Resend SDK if API Key starts with 're_' (Reliable HTTP)
+        const apiKey = process.env.SMTP_PASS || process.env.EMAIL_PASS;
+        if (apiKey && apiKey.startsWith('re_')) {
+            console.log("Using Resend HTTP API...");
+            const resend = new Resend(apiKey);
+            const { error } = await resend.emails.send({
+                from: process.env.EMAIL_USER || 'onboarding@resend.dev',
+                to: email,
+                subject: 'Password Reset OTP - Manoj Security Solutions',
+                html: `<p>Your OTP for password reset is: <strong>${otp}</strong></p><p>This OTP is valid for 10 minutes.<br>Do not share this with anyone.</p>`
+            });
+            if (error) throw new Error("Resend API Error: " + error.message);
+        } else {
+            // Fallback to Nodemailer SMTP
+            console.log("Using SMTP Transporter...");
+            await transporter.sendMail({
+                from: process.env.EMAIL_USER,
+                to: email,
+                subject: 'Password Reset OTP - Manoj Security Solutions',
+                text: `Your OTP for password reset is: ${otp}\n\nThis OTP is valid for 10 minutes.\nDo not share this with anyone.`
+            });
+        }
         console.log("Email sent successfully!");
 
         res.json({ success: true });
