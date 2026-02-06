@@ -40,6 +40,7 @@ const transporter = nodemailer.createTransport({
 
 // Debug Log
 console.log("Manoj Security Server Starting...");
+console.log("SERVER VERSION: v1.5 (Fixed Email Check)"); // <--- Look for this in logs!
 console.log("Environment Keys Available:", Object.keys(process.env).join(', '));
 const emailKey = process.env.SMTP_USER || process.env.EMAIL_USER;
 console.log("Email User Set:", emailKey ? "YES (Len: " + emailKey.length + ")" : "NO");
