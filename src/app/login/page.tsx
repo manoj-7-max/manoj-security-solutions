@@ -4,7 +4,7 @@
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Shield } from "lucide-react";
+import { Shield, Eye, EyeOff } from "lucide-react";
 
 export default function LoginPage() {
     const router = useRouter();
@@ -12,6 +12,7 @@ export default function LoginPage() {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -39,64 +40,63 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="min-h-screen bg-background flex items-center justify-center p-4">
-            {/* Background Decor */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/20 rounded-full blur-[100px]" />
-                <div className="absolute bottom-[-10%] right-[-10%] w-[30%] h-[30%] bg-purple-500/20 rounded-full blur-[100px]" />
-            </div>
+        <div className="min-h-screen flex items-center justify-center p-4 bg-[linear-gradient(135deg,#0b0c10_0%,#1f2833_100%)]">
+            <div className="w-full max-w-[400px] bg-[#1f2833] p-10 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
 
-            <div className="glass-panel w-full max-w-md p-8 relative z-10 border border-white/10 shadow-2xl">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent" />
+                <h2 className="text-[#66fcf1] text-center text-2xl font-bold mb-8 flex items-center justify-center gap-2">
+                    <Shield className="w-6 h-6" /> Login
+                </h2>
 
-                <div className="flex flex-col items-center mb-8">
-                    <div className="p-4 bg-primary/10 rounded-full mb-4 ring-1 ring-primary/20">
-                        <Shield className="w-12 h-12 text-primary" />
+                {error && (
+                    <div className="mb-4 p-3 bg-red-500/10 border border-red-500 text-red-500 rounded text-sm text-center">
+                        {error}
                     </div>
-                    <h1 className="text-2xl font-bold text-white">Welcome Back</h1>
-                    <p className="text-gray-400">Manoj Security Solutions</p>
-                </div>
+                )}
 
-                <form onSubmit={handleSubmit} className="space-y-6">
-                    {error && (
-                        <div className="p-3 bg-red-500/10 border border-red-500/20 rounded text-red-400 text-sm text-center animate-in fade-in slide-in-from-top-2">
-                            {error}
-                        </div>
-                    )}
-
-                    <div>
-                        <label className="block text-sm font-medium text-gray-400 mb-2">Email Address</label>
+                <form onSubmit={handleSubmit}>
+                    <div className="mb-5">
+                        <label className="block mb-2 text-[#c5c6c7] font-medium text-sm">Email or Username</label>
                         <input
-                            type="email"
-                            className="input-field"
-                            placeholder="admin@example.com"
+                            type="text"
+                            required
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            required
+                            className="w-full p-3 bg-[#0b0c10] border border-[#45a29e] rounded-md text-white text-sm focus:outline-none focus:border-[#66fcf1]"
                         />
                     </div>
 
-                    <div>
-                        <label className="block text-sm font-medium text-gray-400 mb-2">Password</label>
-                        <input
-                            type="password"
-                            className="input-field"
-                            placeholder="••••••••"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                        />
+                    <div className="mb-5">
+                        <label className="block mb-2 text-[#c5c6c7] font-medium text-sm">Password</label>
+                        <div className="relative">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                required
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="w-full p-3 bg-[#0b0c10] border border-[#45a29e] rounded-md text-white text-sm focus:outline-none focus:border-[#66fcf1] pr-10"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                            >
+                                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                            </button>
+                        </div>
                     </div>
 
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full btn-primary py-3 disabled:opacity-50 disabled:cursor-not-allowed group relative overflow-hidden"
+                        className="w-full mt-2 py-3 bg-[#66fcf1] text-[#0b0c10] font-bold rounded hover:bg-[#45a29e] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        <span className="relative z-10">{loading ? "Signing In..." : "Sign In"}</span>
-                        <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                        {loading ? "Logging in..." : "Login"}
                     </button>
                 </form>
+
+                <div className="text-center mt-6">
+                    <a href="/" className="text-[#c5c6c7] text-sm hover:text-white transition-colors">← Back to Home</a>
+                </div>
             </div>
         </div>
     );
