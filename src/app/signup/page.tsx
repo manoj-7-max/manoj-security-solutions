@@ -1,40 +1,42 @@
 
 "use client";
 
-import { signIn } from "next-auth/react";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Shield, Eye, EyeOff } from "lucide-react";
+import { UserPlus, Eye, EyeOff } from "lucide-react";
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
-export default function LoginPage() {
+export default function SignupPage() {
     const router = useRouter();
+    const [name, setName] = useState("");
     const [email, setEmail] = useState("");
+    const [phone, setPhone] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
-    const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        setError("");
         setLoading(true);
+        setError("");
 
         try {
-            const res = await signIn("credentials", {
-                email,
-                password,
-                redirect: false,
+            const res = await fetch("/api/auth/signup", {
+                method: "POST",
+                body: JSON.stringify({ name, email, phone, password }),
+                headers: { "Content-Type": "application/json" }
             });
+            const data = await res.json();
 
-            if (res?.error) {
-                setError("Invalid email or password");
-                setLoading(false);
+            if (res.ok) {
+                router.push("/login?signup=success");
             } else {
-                router.push("/admin/dashboard");
-                router.refresh();
+                setError(data.error || "Signup failed");
             }
-        } catch (error) {
-            setError("An error occurred");
+        } catch (e) {
+            setError("Network error");
+        } finally {
             setLoading(false);
         }
     }
@@ -44,7 +46,7 @@ export default function LoginPage() {
             <div className="w-full max-w-[400px] bg-[#1f2833] p-10 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
 
                 <h2 className="text-[#66fcf1] text-center text-2xl font-bold mb-8 flex items-center justify-center gap-2">
-                    <Shield className="w-6 h-6" /> Login
+                    <UserPlus className="w-6 h-6" /> Sign Up
                 </h2>
 
                 {error && (
@@ -55,12 +57,28 @@ export default function LoginPage() {
 
                 <form onSubmit={handleSubmit}>
                     <div className="mb-5">
-                        <label className="block mb-2 text-[#c5c6c7] font-medium text-sm">Email or Username</label>
+                        <label className="block mb-2 text-[#c5c6c7] font-medium text-sm">Full Name</label>
                         <input
-                            type="text"
-                            required
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            type="text" required
+                            value={name} onChange={e => setName(e.target.value)}
+                            className="w-full p-3 bg-[#0b0c10] border border-[#45a29e] rounded-md text-white text-sm focus:outline-none focus:border-[#66fcf1]"
+                        />
+                    </div>
+
+                    <div className="mb-5">
+                        <label className="block mb-2 text-[#c5c6c7] font-medium text-sm">Email</label>
+                        <input
+                            type="email" required
+                            value={email} onChange={e => setEmail(e.target.value)}
+                            className="w-full p-3 bg-[#0b0c10] border border-[#45a29e] rounded-md text-white text-sm focus:outline-none focus:border-[#66fcf1]"
+                        />
+                    </div>
+
+                    <div className="mb-5">
+                        <label className="block mb-2 text-[#c5c6c7] font-medium text-sm">Phone Number</label>
+                        <input
+                            type="tel" required
+                            value={phone} onChange={e => setPhone(e.target.value)}
                             className="w-full p-3 bg-[#0b0c10] border border-[#45a29e] rounded-md text-white text-sm focus:outline-none focus:border-[#66fcf1]"
                         />
                     </div>
@@ -70,9 +88,8 @@ export default function LoginPage() {
                         <div className="relative">
                             <input
                                 type={showPassword ? "text" : "password"}
-                                required
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
+                                required minLength={6}
+                                value={password} onChange={e => setPassword(e.target.value)}
                                 className="w-full p-3 bg-[#0b0c10] border border-[#45a29e] rounded-md text-white text-sm focus:outline-none focus:border-[#66fcf1] pr-10"
                             />
                             <button
@@ -90,15 +107,15 @@ export default function LoginPage() {
                         disabled={loading}
                         className="w-full mt-2 py-3 bg-[#66fcf1] text-[#0b0c10] font-bold rounded hover:bg-[#45a29e] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        {loading ? "Logging in..." : "Login"}
+                        {loading ? "Creating Account..." : "Create Account"}
                     </button>
                 </form>
 
                 <div className="text-center mt-6 space-y-2">
                     <p className="text-[#c5c6c7] text-sm">
-                        Don't have an account? <a href="/signup" className="text-[#66fcf1] hover:underline">Sign Up</a>
+                        Already have an account? <Link href="/login" className="text-[#66fcf1] hover:underline">Login</Link>
                     </p>
-                    <a href="/" className="block text-[#c5c6c7] text-sm hover:text-white transition-colors">← Back to Home</a>
+                    <Link href="/" className="block text-[#c5c6c7] text-sm hover:text-white transition-colors">← Back to Home</Link>
                 </div>
             </div>
         </div>
