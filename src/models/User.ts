@@ -7,6 +7,11 @@ export interface IUser extends Document {
     password?: string;
     role: 'user' | 'staff' | 'admin';
     phone?: string;
+    authType?: 'email' | 'google';
+    googleId?: string;
+    picture?: string;
+    resetOtp?: string;
+    resetOtpExpires?: number;
 }
 
 const UserSchema = new Schema<IUser>({
@@ -15,6 +20,11 @@ const UserSchema = new Schema<IUser>({
     password: { type: String },
     role: { type: String, enum: ['user', 'staff', 'admin'], default: 'user' },
     phone: String,
-});
+    authType: { type: String, enum: ['email', 'google'], default: 'email' },
+    googleId: String,
+    picture: String,
+    resetOtp: String,
+    resetOtpExpires: Number
+}, { timestamps: true });
 
 export default mongoose.models.User || mongoose.model<IUser>('User', UserSchema);
