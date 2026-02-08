@@ -40,19 +40,43 @@ document.addEventListener('DOMContentLoaded', () => {
 // Auth Functions
 function checkAuth() {
     const user = JSON.parse(localStorage.getItem('user'));
+
+    // Desktop Elements
     const authButtons = document.getElementById('authButtons');
     const userMenu = document.getElementById('userMenu');
     const userName = document.getElementById('userName');
 
-    if (!authButtons || !userMenu) return;
+    // Mobile Elements
+    const mobileLogin = document.getElementById('mobileLogin');
+    const mobileSignup = document.getElementById('mobileSignup');
+    const mobileProfile = document.getElementById('mobileProfile');
+    const mobileLogout = document.getElementById('mobileLogout');
+    const mobileUserName = document.getElementById('mobileUserName');
 
     if (user) {
-        authButtons.style.display = 'none';
-        userMenu.style.display = 'block';
+        // Desktop
+        if (authButtons) authButtons.style.display = 'none';
+        if (userMenu) userMenu.style.display = 'block';
         if (userName) userName.innerText = user.name ? user.name.split(' ')[0] : 'User';
+
+        // Mobile
+        if (mobileLogin) mobileLogin.style.display = 'none';
+        if (mobileSignup) mobileSignup.style.display = 'none';
+        if (mobileProfile) {
+            mobileProfile.style.display = 'block';
+            if (mobileUserName) mobileUserName.innerText = user.name ? user.name.split(' ')[0] : 'User';
+        }
+        if (mobileLogout) mobileLogout.style.display = 'block';
     } else {
-        authButtons.style.display = 'block';
-        userMenu.style.display = 'none';
+        // Desktop
+        if (authButtons) authButtons.style.display = 'block';
+        if (userMenu) userMenu.style.display = 'none';
+
+        // Mobile
+        if (mobileLogin) mobileLogin.style.display = 'block';
+        if (mobileSignup) mobileSignup.style.display = 'block';
+        if (mobileProfile) mobileProfile.style.display = 'none';
+        if (mobileLogout) mobileLogout.style.display = 'none';
     }
 }
 

@@ -747,3 +747,35 @@ textarea.form-control {
         flex-direction: column;
     }
 }
+
+/* Mobile Auth Updates */
+@media (max-width: 768px) {
+
+    #authButtons,
+    #userMenu,
+    .header-right>.btn-outline {
+        display: none !important;
+    }
+}
+
+.mobile-auth {
+    display: none;
+    /* Hidden on desktop */
+}
+
+@media (max-width: 768px) {
+    .mobile-auth {
+        display: block !important;
+        text-align: center;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        margin-top: 10px;
+        padding-top: 10px;
+    }
+
+    .mobile-auth a {
+        color: #66fcf1 !important;
+        font-weight: 600;
+        display: block;
+        padding: 10px;
+    }
+}

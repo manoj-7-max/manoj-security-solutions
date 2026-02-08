@@ -229,6 +229,7 @@
 
         // Google Login Callback
         function handleGoogleLogin(response) {
+            console.log("Google Login Response Received:", response);
             fetch('/api/auth/google', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

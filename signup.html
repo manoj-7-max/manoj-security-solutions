@@ -224,6 +224,7 @@
 
         // Google Signup Callback
         function handleGoogleSignup(response) {
+            console.log("Google Signup Response:", response);
             fetch('/api/auth/google', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
