@@ -9,9 +9,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/admin.css">
     <script>
-        // Check Authentication
-        if (!localStorage.getItem('adminLoggedIn')) {
-            window.location.href = 'index.html';
+        // Check Authentication (Robust Role Check)
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user || (user.role !== 'admin' && user.role !== 'staff')) {
+            window.location.href = '../login.html';
         }
     </script>
 </head>

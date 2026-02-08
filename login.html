@@ -237,22 +237,28 @@
             })
                 .then(res => res.json())
                 .then(data => {
-                    if (data.user) {
+                    if (data.error) {
+                        alert('Login Failed: ' + data.error);
+                    } else if (data.user) {
                         localStorage.setItem('user', JSON.stringify(data.user));
                         localStorage.setItem('token', data.user.token || 'demo-token');
 
-                        // Redirect based on Role
+                        // Role-Based Redirect
                         if (data.user.role === 'admin' || data.user.role === 'staff') {
-                            // Direct access to Dashboard (Avoid old redirect loops)
+                            console.log('Redirecting to Dashboard...');
                             window.location.href = 'admin/dashboard.html';
                         } else {
+                            console.log('Redirecting to Home...');
                             window.location.href = 'index.html';
                         }
                     } else {
-                        alert('Google login failed');
+                        alert('Login failed: Unknown response from server');
                     }
                 })
-                .catch(err => console.error('Error:', err));
+                .catch(err => {
+                    console.error('Login Fetch Error:', err);
+                    alert('Connection Error: ' + err.message);
+                });
         }
     </script>
 </body>

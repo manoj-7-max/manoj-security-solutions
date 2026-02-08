@@ -12,9 +12,10 @@
     <!-- Admin CSS -->
     <link rel="stylesheet" href="css/admin.css">
     <script>
-        // Check Authentication
-        if (!localStorage.getItem('adminLoggedIn')) {
-            window.location.href = 'index.html';
+        // Check Authentication (Robust Role Check)
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user || (user.role !== 'admin' && user.role !== 'staff')) {
+            window.location.href = '../login.html';
         }
     </script>
     <style>
@@ -281,7 +282,6 @@
 
         function formatPrice(price) {
             if (!price) return '₹0';
-            // Handle "TBD" or non-numbers
             const num = parseFloat(String(price).replace(/[^0-9.]/g, ''));
             return isNaN(num) ? price : '₹' + num.toLocaleString('en-IN');
         }
@@ -299,14 +299,6 @@
 
         function addToCart(id, name, price, image) {
             const existing = cart.find(item => item.id === id);
-            const numPrice = getNumericPrice(price);
-
-            if (numPrice === 0) {
-                // Prompt for price if TBD/Zero
-                const newPrice = prompt(`Enter price for ${name}:`);
-                if (!newPrice) return;
-                price = newPrice;
-            }
 
             if (existing) {
                 existing.quantity++;
@@ -415,18 +407,35 @@
                 const data = await res.json();
 
                 if (data.success) {
-                    alert('Order Completed! Invoice: ' + data.order.invoiceNo);
+                    // WhatsApp Bill Generation
+                    const billText = `*Manoj Security Solutions*
+Invoice: ${data.order.invoiceNo || 'N/A'}
+Date: ${new Date().toLocaleDateString()}
+------------------------------
+${cart.map(i => `${i.name} x${i.quantity} = ₹${i.price * i.quantity}`).join('\n')}
+------------------------------
+*Total: ₹${(data.order.totalAmount || 0).toLocaleString()}*
+Payment: ${method}
+
+Thank you for choosing Manoj Security!`;
+
+                    if (phone && confirm('Order Completed! Send Bill via WhatsApp?')) {
+                        const waUrl = `https://wa.me/91${phone}?text=${encodeURIComponent(billText)}`;
+                        window.open(waUrl, '_blank');
+                    } else {
+                        alert('Order Saved Successfully! Invoice: ' + data.order.invoiceNo);
+                    }
+
                     cart = [];
                     updateCartUI();
                     document.getElementById('customerName').value = '';
                     document.getElementById('customerPhone').value = '';
-                    // Optionally ask to print invoice
                 } else {
                     alert('Error: ' + data.error);
                 }
             } catch (err) {
                 console.error(err);
-                alert('Checkout failed');
+                alert('Checkout failed: ' + err.message);
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fa-solid fa-check"></i> Complete Order';

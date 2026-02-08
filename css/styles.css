@@ -748,7 +748,12 @@ textarea.form-control {
     }
 }
 
-/* Mobile Auth Updates */
+/* Mobile Auth Hidden on Desktop (High Specificity) */
+.navbar .nav-links .mobile-auth {
+    display: none !important;
+}
+
+/* Mobile Auth Logic */
 @media (max-width: 768px) {
 
     #authButtons,
@@ -756,23 +761,18 @@ textarea.form-control {
     .header-right>.btn-outline {
         display: none !important;
     }
-}
 
-.mobile-auth {
-    display: none;
-    /* Hidden on desktop */
-}
-
-@media (max-width: 768px) {
-    .mobile-auth {
+    .navbar .nav-links .mobile-auth {
         display: block !important;
         text-align: center;
         border-top: 1px solid rgba(255, 255, 255, 0.1);
         margin-top: 10px;
         padding-top: 10px;
+        width: 100%;
+        /* Ensure full width in mobile menu */
     }
 
-    .mobile-auth a {
+    .navbar .nav-links .mobile-auth a {
         color: #66fcf1 !important;
         font-weight: 600;
         display: block;

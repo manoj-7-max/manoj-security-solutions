@@ -11,6 +11,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Admin CSS -->
     <link rel="stylesheet" href="css/admin.css">
+    <script>
+        // Check Authentication (Admin Only)
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user || user.role !== 'admin') {
+            alert('Access Denied: Admins Only');
+            window.location.href = 'dashboard.html';
+        }
+    </script>
     <script src="js/admin.js"></script>
 </head>
 
