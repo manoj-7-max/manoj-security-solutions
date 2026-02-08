@@ -1,18 +1,31 @@
 
 "use client";
 
-import { signIn } from "next-auth/react";
-import { useState } from "react";
+import { signIn, useSession } from "next-auth/react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Shield, Eye, EyeOff } from "lucide-react";
+import Link from 'next/link';
 
 export default function LoginPage() {
     const router = useRouter();
+    const { data: session, status } = useSession();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+
+    useEffect(() => {
+        // If logged in, redirect based on role
+        if (status === "authenticated" && session?.user) {
+            if (session.user.role === 'admin' || session.user.role === 'staff') {
+                router.push("/admin/dashboard");
+            } else {
+                router.push("/");
+            }
+        }
+    }, [status, session, router]);
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -30,13 +43,16 @@ export default function LoginPage() {
                 setError("Invalid email or password");
                 setLoading(false);
             } else {
-                router.push("/admin/dashboard");
-                router.refresh();
+                // Let useEffect handle redirect
             }
         } catch (error) {
             setError("An error occurred");
             setLoading(false);
         }
+    }
+
+    if (status === "loading") {
+        return <div className="min-h-screen bg-[linear-gradient(135deg,#0b0c10_0%,#1f2833_100%)] flex items-center justify-center text-white">Loading...</div>;
     }
 
     return (
@@ -96,9 +112,9 @@ export default function LoginPage() {
 
                 <div className="text-center mt-6 space-y-2">
                     <p className="text-[#c5c6c7] text-sm">
-                        Don't have an account? <a href="/signup" className="text-[#66fcf1] hover:underline">Sign Up</a>
+                        Don't have an account? <Link href="/signup" className="text-[#66fcf1] hover:underline">Sign Up</Link>
                     </p>
-                    <a href="/" className="block text-[#c5c6c7] text-sm hover:text-white transition-colors">← Back to Home</a>
+                    <Link href="/" className="block text-[#c5c6c7] text-sm hover:text-white transition-colors">← Back to Home</Link>
                 </div>
             </div>
         </div>

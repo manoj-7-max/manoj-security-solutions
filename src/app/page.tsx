@@ -40,7 +40,7 @@ export default function Home() {
             <Link href="#contact" className="hover:text-white transition-colors">Contact</Link>
           </nav>
           <Link href="/login" className="btn-primary text-sm px-6 py-2 shadow-lg shadow-primary/10 hover:shadow-primary/30">
-            Admin Login
+            Login
           </Link>
         </div>
       </header>

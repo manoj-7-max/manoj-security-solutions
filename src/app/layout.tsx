@@ -1,6 +1,8 @@
 
 import { Outfit } from "next/font/google";
 import "./globals.css";
+import WhatsAppButton from "@/components/WhatsAppButton";
+import ClientProvider from "@/components/ClientProvider";
 
 const outfit = Outfit({ subsets: ["latin"] });
 
@@ -17,7 +19,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={outfit.className}>
-        {children}
+        <ClientProvider>
+          {children}
+          <WhatsAppButton />
+        </ClientProvider>
       </body>
     </html>
   );
