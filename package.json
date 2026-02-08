@@ -4,7 +4,7 @@
   "description": "Security Solutions Website with Admin Panel",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node seed.js && node server.js"
   },
   "keywords": [],
   "author": "",

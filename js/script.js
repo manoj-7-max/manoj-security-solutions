@@ -34,6 +34,48 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Contact Form Handler
+    const contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+        contactForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(contactForm);
+            // Convert to JSON object (Manually for cleaner structure if needed, or straight from entries)
+            const data = {
+                name: formData.get('name'),
+                phone: formData.get('phone'),
+                service: formData.get('service'),
+                message: formData.get('message')
+            };
+
+            try {
+                const submitBtn = contactForm.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerText;
+                submitBtn.disabled = true;
+                submitBtn.innerText = 'Sending...';
+
+                const res = await fetch('/api/inquiries', { // Ensure API endpoint matches server.js
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await res.json();
+                if (res.ok) {
+                    alert('Request Sent Successfully! We will contact you shortly.');
+                    contactForm.reset();
+                } else {
+                    alert('Error: ' + (result.error || 'Failed to send request'));
+                }
+                submitBtn.disabled = false;
+                submitBtn.innerText = originalText;
+            } catch (err) {
+                console.error(err);
+                alert('Connection Error. Please check your internet.');
+            }
+        });
+    }
+
     checkAuth();
 });
 

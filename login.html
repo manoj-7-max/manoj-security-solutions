@@ -239,8 +239,11 @@
                 .then(data => {
                     if (data.user) {
                         localStorage.setItem('user', JSON.stringify(data.user));
-                        // Redirect based on role
+                        localStorage.setItem('token', data.user.token || 'demo-token');
+
+                        // Redirect based on Role
                         if (data.user.role === 'admin' || data.user.role === 'staff') {
+                            // Direct access to Dashboard (Avoid old redirect loops)
                             window.location.href = 'admin/dashboard.html';
                         } else {
                             window.location.href = 'index.html';
