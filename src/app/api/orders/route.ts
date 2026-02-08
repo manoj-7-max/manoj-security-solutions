@@ -26,3 +26,9 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }
+
+export async function GET() {
+    await dbConnect();
+    const orders = await Order.find().sort({ date: -1 });
+    return NextResponse.json(orders);
+}

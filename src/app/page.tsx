@@ -1,6 +1,21 @@
 
 import Link from 'next/link';
-import { Shield, Lock, Camera, Fingerprint, CheckCircle } from 'lucide-react';
+import { Shield, Lock, Camera, Fingerprint, CheckCircle, Package } from 'lucide-react';
+import ContactForm from '@/components/ContactForm';
+
+const ProductCard = ({ name, price, image }: { name: string; price: string; image: string }) => (
+  <div className="glass-panel p-6 flex flex-col items-center group hover:bg-white/5 transition-colors">
+    <div className="w-24 h-24 mb-4 bg-white/5 rounded-full flex items-center justify-center text-primary group-hover:drop-shadow-[0_0_15px_rgba(102,252,241,0.3)] transition-all">
+      <Package className="w-10 h-10" />
+    </div>
+    <h3 className="text-xl font-bold text-white mb-2">{name}</h3>
+    <p className="text-primary font-bold text-lg mb-4">₹{price}</p>
+    <Link href="#contact" className="btn-primary w-full text-center text-sm">
+      Enquire Now
+    </Link>
+  </div>
+);
+
 
 export const metadata = {
   title: "Manoj Security Solutions | Advanced Security Systems",
@@ -82,6 +97,44 @@ export default function Home() {
                 <p className="text-gray-400 leading-relaxed">{s.desc}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Products */}
+      <section id="products" className="py-24 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-[100px] pointer-events-none" />
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">Our Top Products</h2>
+            <p className="text-gray-400">Industry-leading equipment for maximum security.</p>
+          </div>
+
+          <div className="grid md:grid-cols-4 gap-6">
+            <ProductCard name="4MP IP Camera" price="2800" image="/cctv.png" />
+            <ProductCard name="Biometric Lock" price="12500" image="/lock.png" />
+            <ProductCard name="Video Door Phone" price="8500" image="/vdp.png" />
+            <ProductCard name="Fire Alarm" price="4200" image="/fire.png" />
+          </div>
+
+          <div className="text-center mt-12">
+            <Link href="#contact" className="text-primary hover:text-white underline underline-offset-4 transition-colors">
+              View Full Catalog on Request
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact */}
+      <section id="contact" className="py-24 bg-surface/30">
+        <div className="container mx-auto px-4">
+          <div className="max-w-2xl mx-auto glass-panel p-8 md:p-12">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold mb-2 text-white">Get in Touch</h2>
+              <p className="text-gray-400">Fill out the form and we'll get back to you within 24 hours.</p>
+            </div>
+
+            <ContactForm />
           </div>
         </div>
       </section>
