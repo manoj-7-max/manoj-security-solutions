@@ -6,6 +6,13 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Shield, Eye, EyeOff } from "lucide-react";
 import Link from 'next/link';
+import Script from "next/script";
+
+declare global {
+    interface Window {
+        google: any;
+    }
+}
 
 export default function LoginPage() {
     const router = useRouter();
@@ -17,7 +24,6 @@ export default function LoginPage() {
     const [showPassword, setShowPassword] = useState(false);
 
     useEffect(() => {
-        // If logged in, redirect based on role
         if (status === "authenticated" && session?.user) {
             if (session.user.role === 'admin' || session.user.role === 'staff') {
                 router.push("/admin/dashboard");
@@ -26,6 +32,55 @@ export default function LoginPage() {
             }
         }
     }, [status, session, router]);
+
+    async function handleGoogleLogin(response: any) {
+        try {
+            const res = await fetch("/api/auth/google", {
+                method: "POST",
+                body: JSON.stringify({ credential: response.credential }),
+                headers: { "Content-Type": "application/json" }
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                // In a real next-auth setup, we swap this for a session.
+                // Since we matched the legacy manual flow, we'll manually sign in using next-auth 
+                // OR just force a reload if next-auth isn't aware.
+                // But actually, the best way to sync with NextAuth is to use the 'credentials' provider 
+                // with a special flag, OR just fallback to localStorage like the old app if NextAuth is too complex here.
+
+                // For now, let's use the exact behavior of the old app: LocalStorage + Redirect
+                localStorage.setItem("user", JSON.stringify(data.user));
+
+                // For NextAuth compatibility (optional but recommended)
+                // We won't trigger next-auth signin here to avoid double-auth complexity unless requested.
+
+                if (data.user.role === 'admin' || data.user.role === 'staff') {
+                    window.location.href = "/admin/dashboard";
+                } else {
+                    window.location.href = "/";
+                }
+            } else {
+                setError("Google Login Failed");
+            }
+        } catch (e) {
+            setError("Network Error");
+        }
+    }
+
+    // Initialize Google Button
+    useEffect(() => {
+        if (window.google) {
+            window.google.accounts.id.initialize({
+                client_id: "751943963320-torfec4702u6pt9q7u7gk9rmqpa40ja6.apps.googleusercontent.com",
+                callback: handleGoogleLogin
+            });
+            window.google.accounts.id.renderButton(
+                document.getElementById("googleBtn"),
+                { theme: "filled_black", size: "large", width: "100%" }
+            );
+        }
+    }, []);
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -42,8 +97,6 @@ export default function LoginPage() {
             if (res?.error) {
                 setError("Invalid email or password");
                 setLoading(false);
-            } else {
-                // Let useEffect handle redirect
             }
         } catch (error) {
             setError("An error occurred");
@@ -51,12 +104,21 @@ export default function LoginPage() {
         }
     }
 
-    if (status === "loading") {
-        return <div className="min-h-screen bg-[linear-gradient(135deg,#0b0c10_0%,#1f2833_100%)] flex items-center justify-center text-white">Loading...</div>;
-    }
-
     return (
         <div className="min-h-screen flex items-center justify-center p-4 bg-[linear-gradient(135deg,#0b0c10_0%,#1f2833_100%)]">
+            <Script src="https://accounts.google.com/gsi/client" strategy="lazyOnload" onLoad={() => {
+                if (window.google) {
+                    window.google.accounts.id.initialize({
+                        client_id: "751943963320-torfec4702u6pt9q7u7gk9rmqpa40ja6.apps.googleusercontent.com",
+                        callback: handleGoogleLogin
+                    });
+                    const btn = document.getElementById("googleBtn");
+                    if (btn) {
+                        window.google.accounts.id.renderButton(btn, { theme: "filled_black", size: "large", width: "100%" });
+                    }
+                }
+            }} />
+
             <div className="w-full max-w-[400px] bg-[#1f2833] p-10 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
 
                 <h2 className="text-[#66fcf1] text-center text-2xl font-bold mb-8 flex items-center justify-center gap-2">
@@ -99,20 +161,27 @@ export default function LoginPage() {
                                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                             </button>
                         </div>
-                    </div>
-
-                    <div className="mb-5 text-right">
-                        <Link href="/forgot-password" className="text-sm text-[#c5c6c7] hover:text-[#66fcf1] transition-colors">Forgot Password?</Link>
+                        <div className="text-right mt-2">
+                            <Link href="/forgot-password" className="text-sm text-[#c5c6c7] hover:text-[#66fcf1] transition-colors">Forgot Password?</Link>
+                        </div>
                     </div>
 
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full mt-2 py-3 bg-[#66fcf1] text-[#0b0c10] font-bold rounded hover:bg-[#45a29e] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full py-3 bg-[#66fcf1] text-[#0b0c10] font-bold rounded hover:bg-[#45a29e] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {loading ? "Logging in..." : "Login"}
                     </button>
                 </form>
+
+                <div className="flex items-center my-6">
+                    <div className="flex-1 h-px bg-[#45a29e] opacity-30"></div>
+                    <span className="px-3 text-[#c5c6c7] text-sm">OR</span>
+                    <div className="flex-1 h-px bg-[#45a29e] opacity-30"></div>
+                </div>
+
+                <div id="googleBtn" className="w-full flex justify-center h-[44px]"></div>
 
                 <div className="text-center mt-6 space-y-2">
                     <p className="text-[#c5c6c7] text-sm">
