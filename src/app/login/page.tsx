@@ -34,53 +34,27 @@ export default function LoginPage() {
     }, [status, session, router]);
 
     async function handleGoogleLogin(response: any) {
+        setLoading(true);
         try {
-            const res = await fetch("/api/auth/google", {
-                method: "POST",
-                body: JSON.stringify({ credential: response.credential }),
-                headers: { "Content-Type": "application/json" }
+            // Use NextAuth signIn with 'credentials' provider but passing 'googleToken'
+            // This leverages the logic we just added to src/lib/auth.ts
+            const res = await signIn("credentials", {
+                googleToken: response.credential,
+                redirect: false,
             });
-            const data = await res.json();
 
-            if (data.success) {
-                // In a real next-auth setup, we swap this for a session.
-                // Since we matched the legacy manual flow, we'll manually sign in using next-auth 
-                // OR just force a reload if next-auth isn't aware.
-                // But actually, the best way to sync with NextAuth is to use the 'credentials' provider 
-                // with a special flag, OR just fallback to localStorage like the old app if NextAuth is too complex here.
-
-                // For now, let's use the exact behavior of the old app: LocalStorage + Redirect
-                localStorage.setItem("user", JSON.stringify(data.user));
-
-                // For NextAuth compatibility (optional but recommended)
-                // We won't trigger next-auth signin here to avoid double-auth complexity unless requested.
-
-                if (data.user.role === 'admin' || data.user.role === 'staff') {
-                    window.location.href = "/admin/dashboard";
-                } else {
-                    window.location.href = "/";
-                }
+            if (res?.error) {
+                setError("Google Login Failed: " + res.error);
+                setLoading(false);
             } else {
-                setError("Google Login Failed");
+                // Success! Session is created. useEffect above will redirect.
+                router.refresh();
             }
         } catch (e) {
-            setError("Network Error");
+            setError("Network Error during Google Login");
+            setLoading(false);
         }
     }
-
-    // Initialize Google Button
-    useEffect(() => {
-        if (window.google) {
-            window.google.accounts.id.initialize({
-                client_id: "751943963320-torfec4702u6pt9q7u7gk9rmqpa40ja6.apps.googleusercontent.com",
-                callback: handleGoogleLogin
-            });
-            window.google.accounts.id.renderButton(
-                document.getElementById("googleBtn"),
-                { theme: "filled_black", size: "large", width: "100%" }
-            );
-        }
-    }, []);
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -97,12 +71,26 @@ export default function LoginPage() {
             if (res?.error) {
                 setError("Invalid email or password");
                 setLoading(false);
+            } else {
+                router.refresh();
             }
         } catch (error) {
             setError("An error occurred");
             setLoading(false);
         }
     }
+
+    // Reload Google Button on mount
+    useEffect(() => {
+        if (window.google && document.getElementById("googleBtn")) {
+            try {
+                window.google.accounts.id.renderButton(
+                    document.getElementById("googleBtn"),
+                    { theme: "filled_black", size: "large", width: "100%" }
+                );
+            } catch (e) { console.error(e); }
+        }
+    }, []);
 
     return (
         <div className="min-h-screen flex items-center justify-center p-4 bg-[linear-gradient(135deg,#0b0c10_0%,#1f2833_100%)]">
@@ -181,7 +169,7 @@ export default function LoginPage() {
                     <div className="flex-1 h-px bg-[#45a29e] opacity-30"></div>
                 </div>
 
-                <div id="googleBtn" className="w-full flex justify-center h-[44px]"></div>
+                <div id="googleBtn" className="w-full flex justify-center h-[50px]"></div>
 
                 <div className="text-center mt-6 space-y-2">
                     <p className="text-[#c5c6c7] text-sm">
