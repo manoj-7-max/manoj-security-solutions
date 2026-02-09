@@ -4,15 +4,8 @@
 import { signIn, useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Shield, Eye, EyeOff } from "lucide-react";
+import { Shield, Eye, EyeOff, Loader2 } from "lucide-react";
 import Link from 'next/link';
-import Script from "next/script";
-
-declare global {
-    interface Window {
-        google: any;
-    }
-}
 
 export default function LoginPage() {
     const router = useRouter();
@@ -32,29 +25,6 @@ export default function LoginPage() {
             }
         }
     }, [status, session, router]);
-
-    async function handleGoogleLogin(response: any) {
-        setLoading(true);
-        try {
-            // Use NextAuth signIn with 'credentials' provider but passing 'googleToken'
-            // This leverages the logic we just added to src/lib/auth.ts
-            const res = await signIn("credentials", {
-                googleToken: response.credential,
-                redirect: false,
-            });
-
-            if (res?.error) {
-                setError("Google Login Failed: " + res.error);
-                setLoading(false);
-            } else {
-                // Success! Session is created. useEffect above will redirect.
-                router.refresh();
-            }
-        } catch (e) {
-            setError("Network Error during Google Login");
-            setLoading(false);
-        }
-    }
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -80,102 +50,74 @@ export default function LoginPage() {
         }
     }
 
-    // Reload Google Button on mount
-    useEffect(() => {
-        if (window.google && document.getElementById("googleBtn")) {
-            try {
-                window.google.accounts.id.renderButton(
-                    document.getElementById("googleBtn"),
-                    { theme: "filled_black", size: "large", width: "100%" }
-                );
-            } catch (e) { console.error(e); }
-        }
-    }, []);
-
     return (
-        <div className="min-h-screen flex items-center justify-center p-4 bg-[linear-gradient(135deg,#0b0c10_0%,#1f2833_100%)]">
-            <Script src="https://accounts.google.com/gsi/client" strategy="lazyOnload" onLoad={() => {
-                if (window.google) {
-                    window.google.accounts.id.initialize({
-                        client_id: "751943963320-torfec4702u6pt9q7u7gk9rmqpa40ja6.apps.googleusercontent.com",
-                        callback: handleGoogleLogin
-                    });
-                    const btn = document.getElementById("googleBtn");
-                    if (btn) {
-                        window.google.accounts.id.renderButton(btn, { theme: "filled_black", size: "large", width: "100%" });
-                    }
-                }
-            }} />
-
-            <div className="w-full max-w-[400px] bg-[#1f2833] p-10 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
-
-                <h2 className="text-[#66fcf1] text-center text-2xl font-bold mb-8 flex items-center justify-center gap-2">
-                    <Shield className="w-6 h-6" /> Login
-                </h2>
+        <div className="min-h-screen flex items-center justify-center p-4 bg-secondary/30">
+            <div className="w-full max-w-md bg-card p-8 rounded-xl shadow-lg border border-border">
+                <div className="text-center mb-8">
+                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 text-primary mb-4">
+                        <Shield className="w-6 h-6" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-foreground">Welcome Back</h2>
+                    <p className="text-muted-foreground mt-2">Sign in to your account</p>
+                </div>
 
                 {error && (
-                    <div className="mb-4 p-3 bg-red-500/10 border border-red-500 text-red-500 rounded text-sm text-center">
+                    <div className="mb-6 p-3 bg-red-50 text-red-600 border border-red-200 rounded-lg text-sm flex items-center justify-center">
                         {error}
                     </div>
                 )}
 
-                <form onSubmit={handleSubmit}>
-                    <div className="mb-5">
-                        <label className="block mb-2 text-[#c5c6c7] font-medium text-sm">Email or Username</label>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-foreground">Email Address</label>
                         <input
-                            type="text"
+                            type="email"
                             required
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full p-3 bg-[#0b0c10] border border-[#45a29e] rounded-md text-white text-sm focus:outline-none focus:border-[#66fcf1]"
+                            className="input-field"
+                            placeholder="name@example.com"
                         />
                     </div>
 
-                    <div className="mb-5">
-                        <label className="block mb-2 text-[#c5c6c7] font-medium text-sm">Password</label>
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-foreground flex justify-between">
+                            Password
+                            <Link href="/forgot-password" className="text-primary hover:underline text-xs">Forgot password?</Link>
+                        </label>
                         <div className="relative">
                             <input
                                 type={showPassword ? "text" : "password"}
                                 required
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="w-full p-3 bg-[#0b0c10] border border-[#45a29e] rounded-md text-white text-sm focus:outline-none focus:border-[#66fcf1] pr-10"
+                                className="input-field pr-10"
+                                placeholder="••••••••"
                             />
                             <button
                                 type="button"
                                 onClick={() => setShowPassword(!showPassword)}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                             >
                                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                             </button>
-                        </div>
-                        <div className="text-right mt-2">
-                            <Link href="/forgot-password" className="text-sm text-[#c5c6c7] hover:text-[#66fcf1] transition-colors">Forgot Password?</Link>
                         </div>
                     </div>
 
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full py-3 bg-[#66fcf1] text-[#0b0c10] font-bold rounded hover:bg-[#45a29e] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="btn-primary w-full py-2.5 flex items-center justify-center gap-2"
                     >
-                        {loading ? "Logging in..." : "Login"}
+                        {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+                        {loading ? "Signing in..." : "Sign In"}
                     </button>
                 </form>
 
-                <div className="flex items-center my-6">
-                    <div className="flex-1 h-px bg-[#45a29e] opacity-30"></div>
-                    <span className="px-3 text-[#c5c6c7] text-sm">OR</span>
-                    <div className="flex-1 h-px bg-[#45a29e] opacity-30"></div>
-                </div>
-
-                <div id="googleBtn" className="w-full flex justify-center h-[50px]"></div>
-
-                <div className="text-center mt-6 space-y-2">
-                    <p className="text-[#c5c6c7] text-sm">
-                        Don't have an account? <Link href="/signup" className="text-[#66fcf1] hover:underline">Sign Up</Link>
+                <div className="mt-6 text-center text-sm">
+                    <p className="text-muted-foreground">
+                        Don't have an account? <Link href="/signup" className="text-primary font-semibold hover:underline">Sign Up</Link>
                     </p>
-                    <Link href="/" className="block text-[#c5c6c7] text-sm hover:text-white transition-colors">← Back to Home</Link>
                 </div>
             </div>
         </div>

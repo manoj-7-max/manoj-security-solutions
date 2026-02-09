@@ -1,35 +1,64 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #0b0c10;
-  --color-surface: #1f2833;
-  --color-surface-light: #2a3645;
-  --color-primary: #66fcf1;
-  --color-primary-dark: #45a29e;
-  --color-text: #c5c6c7;
-  --color-white: #ffffff;
+  --color-background: #ffffff;
+  --color-foreground: #0f172a;
 
-  --font-sans: "Outfit", sans-serif;
+  --color-muted: #f1f5f9;
+  --color-muted-foreground: #64748b;
+
+  --color-card: #ffffff;
+  --color-card-foreground: #0f172a;
+
+  --color-popover: #ffffff;
+  --color-popover-foreground: #0f172a;
+
+  --color-border: #e2e8f0;
+  --color-input: #e2e8f0;
+
+  --color-primary: #0f172a;
+  --color-primary-foreground: #f8fafc;
+
+  --color-secondary: #f1f5f9;
+  --color-secondary-foreground: #0f172a;
+
+  --color-accent: #f1f5f9;
+  --color-accent-foreground: #0f172a;
+
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #f8fafc;
+
+  --color-ring: #0f172a;
+
+  --font-sans: "Inter", sans-serif;
 }
 
 @layer base {
   body {
     background-color: var(--color-background);
-    color: var(--color-text);
+    color: var(--color-foreground);
     font-family: var(--font-sans);
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-primary text-background px-4 py-2 rounded font-semibold hover:bg-primary-dark transition-colors;
+    @apply bg-primary text-primary-foreground px-4 py-2 rounded-md font-medium hover:bg-primary/90 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
-  .glass-panel {
-    @apply bg-surface/50 backdrop-blur-md border border-white/10 rounded-xl shadow-lg;
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground px-4 py-2 rounded-md font-medium hover:bg-secondary/80 transition-colors cursor-pointer;
   }
 
+  .btn-outline {
+    @apply border border-input bg-transparent hover:bg-accent hover:text-accent-foreground px-4 py-2 rounded-md font-medium transition-colors cursor-pointer;
+  }
+
+  .card {
+    @apply rounded-xl border border-border bg-card text-card-foreground shadow-sm;
+  }
+  
   .input-field {
-    @apply w-full bg-white/5 border border-white/10 rounded p-2 text-white focus:outline-none focus:border-primary transition-colors;
+    @apply flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
   }
 }

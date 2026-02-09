@@ -90,22 +90,33 @@ export const authOptions: NextAuthOptions = {
                     name: user.name,
                     email: user.email,
                     role: user.role,
+                    image: user.picture // Fix: Include image in session
                 };
             },
         }),
     ],
     callbacks: {
-        async jwt({ token, user }) {
+        async jwt({ token, user, trigger, session }) {
             if (user) {
                 token.role = user.role;
                 token.id = user.id;
             }
+
+            // Support session updates from client-side
+            if (trigger === "update" && session) {
+                if (session.name) token.name = session.name;
+                if (session.image) token.picture = session.image;
+            }
+
             return token;
         },
         async session({ session, token }) {
             if (session.user) {
-                session.user.role = token.role;
-                session.user.id = token.id;
+                session.user.role = token.role as string;
+                session.user.id = token.id as string;
+                // Ensure updates propagate to session
+                if (token.name) session.user.name = token.name;
+                if (token.picture) session.user.image = token.picture;
             }
             return session;
         },

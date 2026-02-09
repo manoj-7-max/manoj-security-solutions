@@ -35,7 +35,7 @@ export default async function AdminLayout({
             </div>
 
             {/* Dynamic Main Content */}
-            <main className="flex-1 overflow-auto bg-gradient-to-br from-surface to-background relative p-6">
+            <main className="flex-1 overflow-auto bg-muted/40 relative p-6">
                 {children}
             </main>
         </div>

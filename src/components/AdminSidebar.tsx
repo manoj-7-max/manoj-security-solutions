@@ -24,13 +24,15 @@ const AdminSidebar = ({ role }: { role: string }) => {
     }
 
     return (
-        <aside className="w-64 bg-surface-light text-white hidden md:flex flex-col border-r border-white/5">
-            <div className="p-6 border-b border-white/5 flex items-center gap-2">
-                <Shield className="text-primary w-6 h-6" />
-                <span className="font-bold text-lg tracking-wide">Manoj Security</span>
+        <aside className="w-64 bg-card text-card-foreground hidden md:flex flex-col border-r border-border h-full">
+            <div className="p-6 border-b border-border flex items-center gap-2">
+                <div className="bg-primary text-primary-foreground p-1 rounded-md">
+                    <Shield className="w-5 h-5" />
+                </div>
+                <span className="font-bold text-lg tracking-tight">Manoj Security</span>
             </div>
 
-            <nav className="flex-1 p-4 space-y-2">
+            <nav className="flex-1 p-4 space-y-1">
                 {links.map((link) => {
                     const Icon = link.icon;
                     const isActive = pathname === link.href;
@@ -39,25 +41,25 @@ const AdminSidebar = ({ role }: { role: string }) => {
                             key={link.href}
                             href={link.href}
                             className={clsx(
-                                "flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200",
+                                "flex items-center gap-3 px-3 py-2 rounded-md transition-all duration-200 text-sm font-medium",
                                 isActive
-                                    ? "bg-primary text-background font-medium shadow-md shadow-primary/20"
-                                    : "hover:bg-white/5 text-gray-300 hover:text-white"
+                                    ? "bg-primary text-primary-foreground shadow-sm"
+                                    : "hover:bg-accent hover:text-accent-foreground text-muted-foreground"
                             )}
                         >
-                            <Icon className="w-5 h-5" />
+                            <Icon className="w-4 h-4" />
                             {link.label}
                         </Link>
                     );
                 })}
             </nav>
 
-            <div className="p-4 border-t border-white/5">
+            <div className="p-4 border-t border-border">
                 <button
                     onClick={() => signOut({ callbackUrl: "/login" })}
-                    className="flex items-center gap-3 w-full px-4 py-3 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                    className="flex items-center gap-3 w-full px-3 py-2 text-red-500 hover:bg-red-50 hover:text-red-700 rounded-md transition-colors text-sm font-medium"
                 >
-                    <LogOut className="w-5 h-5" />
+                    <LogOut className="w-4 h-4" />
                     Logout
                 </button>
             </div>

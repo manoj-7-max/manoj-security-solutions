@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { UserPlus, Eye, EyeOff } from "lucide-react";
+import { UserPlus, Eye, EyeOff, Loader2 } from "lucide-react";
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -42,60 +42,68 @@ export default function SignupPage() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-4 bg-[linear-gradient(135deg,#0b0c10_0%,#1f2833_100%)]">
-            <div className="w-full max-w-[400px] bg-[#1f2833] p-10 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
+        <div className="min-h-screen flex items-center justify-center p-4 bg-secondary/30">
+            <div className="w-full max-w-md bg-card p-8 rounded-xl shadow-lg border border-border">
 
-                <h2 className="text-[#66fcf1] text-center text-2xl font-bold mb-8 flex items-center justify-center gap-2">
-                    <UserPlus className="w-6 h-6" /> Sign Up
-                </h2>
+                <div className="text-center mb-8">
+                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 text-primary mb-4">
+                        <UserPlus className="w-6 h-6" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-foreground">Create Account</h2>
+                    <p className="text-muted-foreground mt-2">Join us today for secure solutions</p>
+                </div>
 
                 {error && (
-                    <div className="mb-4 p-3 bg-red-500/10 border border-red-500 text-red-500 rounded text-sm text-center">
+                    <div className="mb-6 p-3 bg-red-50 text-red-600 border border-red-200 rounded-lg text-sm flex items-center justify-center">
                         {error}
                     </div>
                 )}
 
-                <form onSubmit={handleSubmit}>
-                    <div className="mb-5">
-                        <label className="block mb-2 text-[#c5c6c7] font-medium text-sm">Full Name</label>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-foreground">Full Name</label>
                         <input
                             type="text" required
                             value={name} onChange={e => setName(e.target.value)}
-                            className="w-full p-3 bg-[#0b0c10] border border-[#45a29e] rounded-md text-white text-sm focus:outline-none focus:border-[#66fcf1]"
+                            className="input-field"
+                            placeholder="John Doe"
                         />
                     </div>
 
-                    <div className="mb-5">
-                        <label className="block mb-2 text-[#c5c6c7] font-medium text-sm">Email</label>
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-foreground">Email Address</label>
                         <input
                             type="email" required
                             value={email} onChange={e => setEmail(e.target.value)}
-                            className="w-full p-3 bg-[#0b0c10] border border-[#45a29e] rounded-md text-white text-sm focus:outline-none focus:border-[#66fcf1]"
+                            className="input-field"
+                            placeholder="john@example.com"
                         />
                     </div>
 
-                    <div className="mb-5">
-                        <label className="block mb-2 text-[#c5c6c7] font-medium text-sm">Phone Number</label>
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-foreground">Phone Number</label>
                         <input
                             type="tel" required
                             value={phone} onChange={e => setPhone(e.target.value)}
-                            className="w-full p-3 bg-[#0b0c10] border border-[#45a29e] rounded-md text-white text-sm focus:outline-none focus:border-[#66fcf1]"
+                            className="input-field"
+                            placeholder="+91 98765 43210"
                         />
                     </div>
 
-                    <div className="mb-5">
-                        <label className="block mb-2 text-[#c5c6c7] font-medium text-sm">Password</label>
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-foreground">Password</label>
                         <div className="relative">
                             <input
                                 type={showPassword ? "text" : "password"}
                                 required minLength={6}
                                 value={password} onChange={e => setPassword(e.target.value)}
-                                className="w-full p-3 bg-[#0b0c10] border border-[#45a29e] rounded-md text-white text-sm focus:outline-none focus:border-[#66fcf1] pr-10"
+                                className="input-field pr-10"
+                                placeholder="••••••••"
                             />
                             <button
                                 type="button"
                                 onClick={() => setShowPassword(!showPassword)}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                             >
                                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                             </button>
@@ -105,17 +113,17 @@ export default function SignupPage() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full mt-2 py-3 bg-[#66fcf1] text-[#0b0c10] font-bold rounded hover:bg-[#45a29e] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="btn-primary w-full py-2.5 flex items-center justify-center gap-2 mt-4"
                     >
-                        {loading ? "Creating Account..." : "Create Account"}
+                        {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+                        {loading ? "Creating Account..." : "Sign Up"}
                     </button>
                 </form>
 
-                <div className="text-center mt-6 space-y-2">
-                    <p className="text-[#c5c6c7] text-sm">
-                        Already have an account? <Link href="/login" className="text-[#66fcf1] hover:underline">Login</Link>
+                <div className="mt-6 text-center text-sm">
+                    <p className="text-muted-foreground">
+                        Already have an account? <Link href="/login" className="text-primary font-semibold hover:underline">Sign In</Link>
                     </p>
-                    <Link href="/" className="block text-[#c5c6c7] text-sm hover:text-white transition-colors">← Back to Home</Link>
                 </div>
             </div>
         </div>
