@@ -32,7 +32,10 @@ export default function ForgotPassword() {
             if (res.ok) {
                 setStep(2);
                 // Check logs if using mock email
-                if (data.message && data.message.includes("Mock")) {
+                if (data.debugOtp) {
+                    alert(`DEBUG MODE: Your OTP is ${data.debugOtp}`);
+                    console.log("OTP for testing:", data.debugOtp);
+                } else if (data.message && data.message.includes("Mock")) {
                     alert("Dev Mode: Check server logs for OTP");
                 }
             } else {

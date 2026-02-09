@@ -60,7 +60,11 @@ export async function POST(req: Request) {
                 text: `Your OTP is: ${otp}`,
             });
 
-            return NextResponse.json({ success: true });
+            return NextResponse.json({
+                success: true,
+                message: "OTP sent (Debug Mode Enabled)",
+                debugOtp: otp
+            });
 
         } catch (emailError: any) {
             console.error("Email Send Failed:", emailError);
