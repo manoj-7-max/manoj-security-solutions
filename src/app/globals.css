@@ -1,34 +1,37 @@
 @import "tailwindcss";
 
 @theme {
+  /* Vibrant & Professional Palette */
   --color-background: #ffffff;
-  --color-foreground: #0f172a;
+  --color-foreground: #1e293b;
 
-  --color-muted: #f1f5f9;
+  --color-muted: #f8fafc;
   --color-muted-foreground: #64748b;
 
   --color-card: #ffffff;
-  --color-card-foreground: #0f172a;
+  --color-card-foreground: #1e293b;
 
   --color-popover: #ffffff;
-  --color-popover-foreground: #0f172a;
+  --color-popover-foreground: #1e293b;
 
   --color-border: #e2e8f0;
   --color-input: #e2e8f0;
 
-  --color-primary: #0f172a;
-  --color-primary-foreground: #f8fafc;
+  /* Vibrant Blue Primary */
+  --color-primary: #2563eb;
+  --color-primary-foreground: #ffffff;
 
-  --color-secondary: #f1f5f9;
+  /* Vibrant Orange Accent */
+  --color-secondary: #f0f9ff;
   --color-secondary-foreground: #0f172a;
 
-  --color-accent: #f1f5f9;
-  --color-accent-foreground: #0f172a;
+  --color-accent: #f0f9ff;
+  --color-accent-foreground: #2563eb;
 
   --color-destructive: #ef4444;
-  --color-destructive-foreground: #f8fafc;
+  --color-destructive-foreground: #ffffff;
 
-  --color-ring: #0f172a;
+  --color-ring: #2563eb;
 
   --font-sans: "Inter", sans-serif;
 }
@@ -42,12 +45,14 @@
 }
 
 @layer components {
+
+  /* Vibrant Button Styles */
   .btn-primary {
-    @apply bg-primary text-primary-foreground px-4 py-2 rounded-md font-medium hover:bg-primary/90 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply bg-primary text-primary-foreground px-6 py-3 rounded-full font-bold shadow-lg shadow-blue-500/20 hover:bg-blue-700 hover:shadow-blue-500/30 transition-all transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .btn-secondary {
-    @apply bg-secondary text-secondary-foreground px-4 py-2 rounded-md font-medium hover:bg-secondary/80 transition-colors cursor-pointer;
+    @apply bg-white text-primary border-2 border-primary px-6 py-3 rounded-full font-bold hover:bg-blue-50 transition-all cursor-pointer;
   }
 
   .btn-outline {
@@ -55,10 +60,23 @@
   }
 
   .card {
-    @apply rounded-xl border border-border bg-card text-card-foreground shadow-sm;
+    @apply rounded-2xl border border-border bg-card text-card-foreground shadow-sm hover:shadow-xl transition-all duration-300;
   }
-  
+
+  .glass-panel {
+    @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-lg;
+  }
+
   .input-field {
-    @apply flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply flex w-full rounded-lg border border-input bg-background px-4 py-3 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-transparent disabled:cursor-not-allowed disabled:opacity-50 transition-shadow;
+  }
+
+  /* Section Gradients */
+  .bg-gradient-hero {
+    @apply bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900;
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600;
   }
 }
