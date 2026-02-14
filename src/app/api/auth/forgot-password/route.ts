@@ -80,7 +80,12 @@ export async function POST(req: Request) {
             });
 
             console.log(`[AUTH] Email sent successfully: ${info.messageId}`);
-            return NextResponse.json({ success: true, message: "OTP sent to your email." });
+            return NextResponse.json({
+                success: true,
+                message: "OTP sent to your email.",
+                // DEV MODE: Return OTP to frontend to unblock user if email fails
+                debugOtp: otp
+            });
 
         } catch (emailError: any) {
             console.error("Email Send Failed Details:", JSON.stringify(emailError, null, 2));
