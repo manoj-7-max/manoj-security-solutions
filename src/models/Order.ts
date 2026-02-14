@@ -18,8 +18,11 @@ export interface IOrder extends Document {
     items: IOrderItem[];
     totalAmount: number;
     paymentMethod: 'Cash' | 'Card' | 'UPI' | 'Bank Transfer';
-    status: 'Completed' | 'Pending' | 'Cancelled';
+    paymentStatus: 'Paid' | 'Unpaid' | 'Partial' | 'Refunded';
+    status: 'Completed' | 'Pending' | 'Cancelled' | 'Processing';
     date: Date;
+    userId?: string; // Link to User model
+    createdAt: Date;
 }
 
 const OrderSchema = new Schema<IOrder>({
@@ -37,8 +40,10 @@ const OrderSchema = new Schema<IOrder>({
     }],
     totalAmount: Number,
     paymentMethod: { type: String, enum: ['Cash', 'Card', 'UPI', 'Bank Transfer'], default: 'Cash' },
-    status: { type: String, default: 'Completed' },
-    date: { type: Date, default: Date.now }
-});
+    paymentStatus: { type: String, enum: ['Paid', 'Unpaid', 'Partial', 'Refunded'], default: 'Paid' }, // Default Paid for POS usually
+    status: { type: String, enum: ['Completed', 'Pending', 'Cancelled', 'Processing'], default: 'Completed' },
+    date: { type: Date, default: Date.now },
+    userId: { type: Schema.Types.ObjectId, ref: 'User' }
+}, { timestamps: true });
 
 export default mongoose.models.Order || mongoose.model<IOrder>('Order', OrderSchema);

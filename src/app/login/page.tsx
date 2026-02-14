@@ -14,9 +14,12 @@ declare global {
     }
 }
 
+import PhoneLogin from "@/components/auth/PhoneLogin";
+
 export default function LoginPage() {
     const router = useRouter();
     const { data: session, status } = useSession();
+    const [loginType, setLoginType] = useState<'email' | 'phone'>('phone');
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
@@ -117,64 +120,88 @@ export default function LoginPage() {
                 )}
 
                 <div className="space-y-4">
-                    {/* Google Login Button Container */}
-                    <div id="googleBtn" className="w-full flex justify-center h-[44px]"></div>
+                    <div className="space-y-4">
+                        {/* Login Type Tabs */}
+                        <div className="flex bg-slate-100 p-1 rounded-lg mb-6">
+                            <button
+                                onClick={() => setLoginType('phone')}
+                                className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${loginType === 'phone' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                            >
+                                Mobile Number
+                            </button>
+                            <button
+                                onClick={() => setLoginType('email')}
+                                className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${loginType === 'email' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                            >
+                                Email
+                            </button>
+                        </div>
 
-                    <div className="relative flex items-center justify-center">
-                        <div className="absolute inset-0 flex items-center">
-                            <span className="w-full border-t border-gray-200" />
-                        </div>
-                        <div className="relative flex justify-center text-xs uppercase">
-                            <span className="bg-white px-2 text-slate-400 font-medium">Or continue with</span>
-                        </div>
+                        {loginType === 'phone' ? (
+                            <PhoneLogin />
+                        ) : (
+                            <>
+                                {/* Google Login Button Container */}
+                                <div id="googleBtn" className="w-full flex justify-center h-[44px]"></div>
+
+                                <div className="relative flex items-center justify-center my-4">
+                                    <div className="absolute inset-0 flex items-center">
+                                        <span className="w-full border-t border-gray-200" />
+                                    </div>
+                                    <div className="relative flex justify-center text-xs uppercase">
+                                        <span className="bg-white px-2 text-slate-400 font-medium">Or continue with email</span>
+                                    </div>
+                                </div>
+
+                                <form onSubmit={handleSubmit} className="space-y-4">
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-bold text-slate-700">Email Address</label>
+                                        <input
+                                            type="email"
+                                            required
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                            className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all placeholder:text-slate-400"
+                                            placeholder="name@example.com"
+                                        />
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-bold text-slate-700 flex justify-between">
+                                            Password
+                                            <Link href="/forgot-password" className="text-blue-600 hover:text-blue-700 text-xs font-semibold">Forgot password?</Link>
+                                        </label>
+                                        <div className="relative">
+                                            <input
+                                                type={showPassword ? "text" : "password"}
+                                                required
+                                                value={password}
+                                                onChange={(e) => setPassword(e.target.value)}
+                                                className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all pr-10 placeholder:text-slate-400"
+                                                placeholder="••••••••"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowPassword(!showPassword)}
+                                                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                                            >
+                                                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        type="submit"
+                                        disabled={loading}
+                                        className="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-lg transition-all shadow-lg hover:shadow-xl disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                    >
+                                        {loading && <Loader2 className="w-5 h-5 animate-spin" />}
+                                        {loading ? "Signing in..." : "Sign In"}
+                                    </button>
+                                </form>
+                            </>
+                        )}
                     </div>
-
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        <div className="space-y-2">
-                            <label className="text-sm font-bold text-slate-700">Email Address</label>
-                            <input
-                                type="email"
-                                required
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all placeholder:text-slate-400"
-                                placeholder="name@example.com"
-                            />
-                        </div>
-
-                        <div className="space-y-2">
-                            <label className="text-sm font-bold text-slate-700 flex justify-between">
-                                Password
-                                <Link href="/forgot-password" className="text-blue-600 hover:text-blue-700 text-xs font-semibold">Forgot password?</Link>
-                            </label>
-                            <div className="relative">
-                                <input
-                                    type={showPassword ? "text" : "password"}
-                                    required
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all pr-10 placeholder:text-slate-400"
-                                    placeholder="••••••••"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-                                >
-                                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                                </button>
-                            </div>
-                        </div>
-
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-lg transition-all shadow-lg hover:shadow-xl disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                        >
-                            {loading && <Loader2 className="w-5 h-5 animate-spin" />}
-                            {loading ? "Signing in..." : "Sign In"}
-                        </button>
-                    </form>
                 </div>
 
                 <div className="mt-8 text-center text-sm">

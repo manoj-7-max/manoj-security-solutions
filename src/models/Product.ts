@@ -8,7 +8,9 @@ export interface IProduct extends Document {
     price: string;
     image: string;
     icon: string;
-    createdAt: Date;
+    stock: number;
+    images: string[];
+    variants: any[];
 }
 
 const ProductSchema = new Schema<IProduct>({
@@ -16,8 +18,11 @@ const ProductSchema = new Schema<IProduct>({
     category: { type: String, required: true },
     description: String,
     price: String,
-    image: String,
+    image: String, // Main image
+    images: [String], // Gallery
     icon: String,
+    stock: { type: Number, default: 0 },
+    variants: [Schema.Types.Mixed],
     createdAt: { type: Date, default: Date.now },
 });
 

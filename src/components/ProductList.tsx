@@ -12,6 +12,7 @@ interface Product {
     category: string;
     image?: string;
     icon?: string;
+    stock?: number;
 }
 
 export default function ProductList({ initialProducts }: { initialProducts: Product[] }) {
@@ -22,6 +23,7 @@ export default function ProductList({ initialProducts }: { initialProducts: Prod
     // Form State
     const [name, setName] = useState("");
     const [price, setPrice] = useState("");
+    const [stock, setStock] = useState("");
     const [category, setCategory] = useState("CCTV");
     const [desc, setDesc] = useState("");
     const [file, setFile] = useState<File | null>(null);
@@ -49,6 +51,7 @@ export default function ProductList({ initialProducts }: { initialProducts: Prod
         formData.append("price", price);
         formData.append("category", category);
         formData.append("description", desc);
+        formData.append("stock", stock);
         if (file) formData.append("image", file);
 
         try {
@@ -61,7 +64,7 @@ export default function ProductList({ initialProducts }: { initialProducts: Prod
                 setProducts([newProduct, ...products]);
                 setIsModalOpen(false);
                 // Reset Form
-                setName(""); setPrice(""); setDesc(""); setFile(null);
+                setName(""); setPrice(""); setStock(""); setDesc(""); setFile(null);
             } else {
                 alert("Error: " + newProduct.error);
             }
@@ -105,7 +108,12 @@ export default function ProductList({ initialProducts }: { initialProducts: Prod
                         </div>
                         <h3 className="font-semibold text-white mb-1">{p.name}</h3>
                         <span className="text-sm text-gray-400 mb-2">{p.category}</span>
-                        <span className="text-lg font-bold text-primary">₹{p.price}</span>
+                        <div className="flex justify-between w-full px-4 mt-2">
+                            <span className="font-bold text-primary">₹{p.price}</span>
+                            <span className={`text-xs px-2 py-1 rounded ${!p.stock || p.stock === 0 ? 'bg-red-500/20 text-red-400' : 'bg-green-500/20 text-green-400'}`}>
+                                {!p.stock || p.stock === 0 ? 'Out of Stock' : `${p.stock} Left`}
+                            </span>
+                        </div>
                     </div>
                 ))}
             </div>
@@ -128,11 +136,18 @@ export default function ProductList({ initialProducts }: { initialProducts: Prod
                                 className="input-field"
                                 value={name} onChange={e => setName(e.target.value)}
                             />
-                            <input
-                                type="text" placeholder="Price (e.g. 4500)" required
-                                className="input-field"
-                                value={price} onChange={e => setPrice(e.target.value)}
-                            />
+                            <div className="flex gap-2">
+                                <input
+                                    type="number" placeholder="Price (₹)" required
+                                    className="input-field flex-1"
+                                    value={price} onChange={e => setPrice(e.target.value)}
+                                />
+                                <input
+                                    type="number" placeholder="Stock Qty" required
+                                    className="input-field flex-1"
+                                    value={stock} onChange={e => setStock(e.target.value)}
+                                />
+                            </div>
                             <select
                                 className="input-field bg-surface text-white"
                                 value={category} onChange={e => setCategory(e.target.value)}
@@ -140,6 +155,8 @@ export default function ProductList({ initialProducts }: { initialProducts: Prod
                                 <option value="CCTV">CCTV Camera</option>
                                 <option value="Access Control">Access Control</option>
                                 <option value="Biometric">Biometric</option>
+                                <option value="Networking">Networking</option>
+                                <option value="Web Development">Web Development</option>
                                 <option value="Other">Other</option>
                             </select>
                             <textarea

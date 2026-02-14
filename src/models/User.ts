@@ -12,19 +12,21 @@ export interface IUser extends Document {
     picture?: string;
     resetOtp?: string;
     resetOtpExpires?: number;
+    address?: string;
 }
 
 const UserSchema = new Schema<IUser>({
     name: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
+    email: { type: String, unique: true, sparse: true }, // Emails might be optional if phone-first
     password: { type: String },
     role: { type: String, enum: ['user', 'staff', 'admin'], default: 'user' },
-    phone: String,
-    authType: { type: String, enum: ['email', 'google'], default: 'email' },
+    phone: { type: String, unique: true, sparse: true }, // Phone is now key
+    authType: { type: String, enum: ['email', 'google', 'phone'], default: 'email' },
     googleId: String,
     picture: String,
     resetOtp: String,
-    resetOtpExpires: Number
+    resetOtpExpires: Number,
+    address: String
 }, { timestamps: true });
 
 export default mongoose.models.User || mongoose.model<IUser>('User', UserSchema);

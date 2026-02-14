@@ -28,6 +28,7 @@ export async function POST(req: Request) {
         const description = data.get('description') as string;
         const price = data.get('price') as string;
         const icon = data.get('icon') as string;
+        const stock = parseInt(data.get('stock') as string) || 0;
 
         const file: File | null = data.get('image') as unknown as File;
         let imagePath = '';
@@ -56,6 +57,7 @@ export async function POST(req: Request) {
             description,
             price,
             icon,
+            stock,
             image: imagePath || null,
         });
 

@@ -2,7 +2,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Search, FileText } from "lucide-react";
+import { Search, FileText, Plus } from "lucide-react";
+import Link from "next/link";
 
 export default function InvoicePage() {
     const [orders, setOrders] = useState<any[]>([]);
@@ -15,15 +16,14 @@ export default function InvoicePage() {
         });
     }, []);
 
-    // API needed!
-    // Wait, I didn't create GET /api/orders!
-    // I only created POST /api/orders in Step 2054.
-
-    // I need to update /api/orders/route.ts to include GET.
-
     return (
         <div className="space-y-6">
-            <h1 className="text-2xl font-bold text-white">Invoices</h1>
+            <div className="flex justify-between items-center">
+                <h1 className="text-2xl font-bold text-white">Invoices</h1>
+                <Link href="/admin/invoice/create" className="btn-primary flex items-center gap-2">
+                    <Plus className="w-4 h-4" /> New Invoice
+                </Link>
+            </div>
 
             <div className="glass-panel p-4 flex gap-2">
                 <Search className="text-gray-400" />

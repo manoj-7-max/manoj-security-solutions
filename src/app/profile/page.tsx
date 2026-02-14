@@ -6,6 +6,7 @@ import Image from "next/image";
 import { User, Mail, Phone, Shield, Camera } from "lucide-react";
 import ClientProfileForm from "./client-profile-form";
 import dbConnect from "@/lib/db";
+import Order from "@/models/Order";
 import UserModel from "@/models/User";
 
 export const metadata = {
@@ -25,6 +26,8 @@ export default async function ProfilePage() {
     if (!user) {
         return <div className="text-white text-center p-10">User not found</div>;
     }
+
+    const userOrders = await Order.find({ userId: user._id }).sort({ date: -1 });
 
     const userData = {
         name: user.name,
@@ -70,8 +73,8 @@ export default async function ProfilePage() {
                     </div>
                 </div>
 
-                {/* Edit Form */}
-                <div className="md:col-span-2">
+                {/* Edit Form & Orders */}
+                <div className="md:col-span-2 space-y-8">
                     <div className="glass-panel p-8">
                         <div className="flex items-center justify-between mb-6">
                             <h3 className="text-xl font-bold text-white">Personal Information</h3>
@@ -79,6 +82,42 @@ export default async function ProfilePage() {
 
                         <ClientProfileForm user={userData} />
                     </div>
+
+                    {/* My Orders Section */}
+                    {userOrders.length > 0 && (
+                        <div className="glass-panel p-8">
+                            <h3 className="text-xl font-bold text-white mb-4">My Invoices & Orders</h3>
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left text-sm text-gray-300">
+                                    <thead className="text-gray-500 border-b border-gray-700">
+                                        <tr>
+                                            <th className="pb-2">Invoice #</th>
+                                            <th className="pb-2">Date</th>
+                                            <th className="pb-2">Total</th>
+                                            <th className="pb-2">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-800">
+                                        {userOrders.map((order: any) => (
+                                            <tr key={order._id} className="hover:bg-white/5 transition-colors">
+                                                <td className="py-3 font-mono text-primary">{order.invoiceNo}</td>
+                                                <td className="py-3">{new Date(order.date).toLocaleDateString()}</td>
+                                                <td className="py-3 font-bold text-white">₹{order.totalAmount.toLocaleString()}</td>
+                                                <td className="py-3">
+                                                    <span className={`px-2 py-1 rounded text-xs ${order.status === 'Completed' ? 'bg-green-500/10 text-green-500' :
+                                                        order.status === 'Pending' ? 'bg-yellow-500/10 text-yellow-500' :
+                                                            'bg-red-500/10 text-red-500'
+                                                        }`}>
+                                                        {order.status}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

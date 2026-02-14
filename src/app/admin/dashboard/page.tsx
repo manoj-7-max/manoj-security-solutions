@@ -4,7 +4,7 @@ import Product from "@/models/Product";
 import Service from "@/models/Service";
 import Inquiry from "@/models/Inquiry";
 import Order from "@/models/Order";
-import { DollarSign, ShoppingBag, Wrench, Mail, ArrowRight } from "lucide-react";
+import { DollarSign, ShoppingBag, Wrench, Mail, ArrowRight, FileText } from "lucide-react";
 import Link from "next/link";
 
 export const metadata = {
@@ -53,6 +53,9 @@ export default async function DashboardPage() {
                     <div className="flex flex-wrap gap-4">
                         <Link href="/admin/pos" className="btn-primary flex items-center gap-2 px-6 py-3 text-lg">
                             <ShoppingBag className="w-5 h-5" /> Launch POS System
+                        </Link>
+                        <Link href="/admin/invoice/create" className="btn-secondary flex items-center gap-2 px-6 py-3 border hover:bg-secondary/80">
+                            <FileText className="w-5 h-5" /> Create Invoice
                         </Link>
                         <Link href="/admin/products" className="btn-secondary flex items-center gap-2 px-6 py-3 border hover:bg-secondary/80">
                             View Products
