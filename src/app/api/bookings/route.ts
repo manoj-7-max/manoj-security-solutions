@@ -58,8 +58,14 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const role = session.user.role;
 
-    // View own bookings only, unless admin/staff
-    if (role !== 'admin' && role !== 'staff') {
+    // View own bookings only, unless admin
+    if (role === 'admin') {
+        // Admin sees all
+    } else if (role === 'staff') {
+        // Staff sees only assigned bookings
+        query.technicianId = session.user.id;
+    } else {
+        // User sees only their own bookings
         query.userId = session.user.id;
     }
 

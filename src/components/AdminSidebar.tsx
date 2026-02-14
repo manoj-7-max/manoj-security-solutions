@@ -20,7 +20,12 @@ const AdminSidebar = ({ role }: { role: string }) => {
     ];
 
     if (role === "admin") {
+        links.push({ href: "/admin/bookings", label: "Bookings", icon: Calendar });
         links.push({ href: "/admin/staff", label: "Manage Staff", icon: Users });
+    }
+
+    if (role === "staff") {
+        links.push({ href: "/admin/tasks", label: "My Tasks", icon: Wrench });
     }
 
     return (
