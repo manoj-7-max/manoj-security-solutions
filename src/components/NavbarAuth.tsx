@@ -61,6 +61,15 @@ export default function NavbarAuth() {
                                 <span>My Profile</span>
                             </Link>
 
+                            <Link
+                                href="/profile"
+                                className="flex items-center gap-3 px-4 py-3 text-sm text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+                                onClick={() => setIsOpen(false)}
+                            >
+                                <Calendar className="w-4 h-4" />
+                                <span>My Bookings</span>
+                            </Link>
+
                             <button
                                 onClick={() => signOut({ callbackUrl: '/' })}
                                 className="w-full text-left flex items-center gap-3 px-4 py-3 text-sm text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors border-t border-border"
