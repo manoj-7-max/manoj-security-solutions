@@ -43,7 +43,7 @@ const OrderSchema = new Schema<IOrder>({
     paymentStatus: { type: String, enum: ['Paid', 'Unpaid', 'Partial', 'Refunded'], default: 'Paid' }, // Default Paid for POS usually
     status: { type: String, enum: ['Completed', 'Pending', 'Cancelled', 'Processing'], default: 'Completed' },
     date: { type: Date, default: Date.now },
-    userId: { type: Schema.Types.ObjectId, ref: 'User' }
+    userId: { type: mongoose.Schema.Types.ObjectId as any, ref: 'User' }
 }, { timestamps: true });
 
 export default mongoose.models.Order || mongoose.model<IOrder>('Order', OrderSchema);
