@@ -10,7 +10,7 @@ export interface IStaffLog extends Document {
 }
 
 const StaffLogSchema = new Schema<IStaffLog>({
-    staffId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    staffId: { type: mongoose.Schema.Types.ObjectId as any, ref: 'User', required: true },
     action: { type: String, required: true },
     details: String,
     images: [String]
