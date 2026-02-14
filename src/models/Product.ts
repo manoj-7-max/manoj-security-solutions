@@ -11,6 +11,7 @@ export interface IProduct extends Document {
     stock: number;
     images: string[];
     variants: any[];
+    createdAt: Date;
 }
 
 const ProductSchema = new Schema<IProduct>({
