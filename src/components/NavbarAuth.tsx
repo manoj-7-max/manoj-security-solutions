@@ -3,7 +3,7 @@
 
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
-import { User, LogOut, LayoutDashboard } from "lucide-react";
+import { User, LogOut, LayoutDashboard, Calendar } from "lucide-react";
 import { useState } from "react";
 
 export default function NavbarAuth() {
