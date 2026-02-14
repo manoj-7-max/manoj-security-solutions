@@ -13,12 +13,12 @@ export interface IBooking extends Document {
 }
 
 const BookingSchema = new Schema<IBooking>({
-    userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    serviceId: { type: Schema.Types.ObjectId, ref: 'Service', required: true },
+    userId: { type: mongoose.Schema.Types.ObjectId as any, ref: 'User', required: true },
+    serviceId: { type: mongoose.Schema.Types.ObjectId as any, ref: 'Service', required: true },
     date: { type: Date, required: true },
     address: { type: String, required: true },
     notes: String,
-    technicianId: { type: Schema.Types.ObjectId, ref: 'User' }, // Staff
+    technicianId: { type: mongoose.Schema.Types.ObjectId as any, ref: 'User' }, // Staff
     status: { type: String, enum: ['Pending', 'Confirmed', 'Completed', 'Cancelled'], default: 'Pending' }
 }, { timestamps: true });
 
