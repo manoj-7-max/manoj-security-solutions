@@ -122,11 +122,7 @@ export default function PhoneLogin() {
                     <button disabled={loading} className="btn-primary w-full py-2">
                         {loading ? "Sending..." : "Send OTP"}
                     </button>
-                    {!auth.currentUser && (
-                        <p className="text-xs text-center text-red-400 mt-2">
-                            * Requires Valid Firebase Config in src/lib/firebase.ts
-                        </p>
-                    )}
+
                 </form>
             ) : (
                 <form onSubmit={handleVerifyOtp} className="space-y-4">
