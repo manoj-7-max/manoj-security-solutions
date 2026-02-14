@@ -7,6 +7,7 @@ import { User, Mail, Phone, Shield, Camera } from "lucide-react";
 import ClientProfileForm from "./client-profile-form";
 import dbConnect from "@/lib/db";
 import Booking from "@/models/Booking";
+import UserModel from "@/models/User";
 
 export const metadata = {
     title: "My Profile | Manoj Security Solutions",
@@ -103,9 +104,9 @@ export default async function ProfilePage() {
                                                 </p>
                                             </div>
                                             <span className={`px-2 py-1 rounded text-xs font-bold uppercase tracking-wider border ${booking.status === 'Completed' ? 'bg-green-500/10 text-green-500 border-green-500/20' :
-                                                    booking.status === 'Confirmed' ? 'bg-blue-500/10 text-blue-500 border-blue-500/20' :
-                                                        booking.status === 'Cancelled' ? 'bg-red-500/10 text-red-500 border-red-500/20' :
-                                                            'bg-yellow-500/10 text-yellow-500 border-yellow-500/20'
+                                                booking.status === 'Confirmed' ? 'bg-blue-500/10 text-blue-500 border-blue-500/20' :
+                                                    booking.status === 'Cancelled' ? 'bg-red-500/10 text-red-500 border-red-500/20' :
+                                                        'bg-yellow-500/10 text-yellow-500 border-yellow-500/20'
                                                 }`}>
                                                 {booking.status}
                                             </span>
@@ -146,8 +147,8 @@ export default async function ProfilePage() {
                                                 <td className="py-4 font-bold text-white">₹{order.totalAmount.toLocaleString()}</td>
                                                 <td className="py-4">
                                                     <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide ${order.status === 'Completed' ? 'bg-green-500/20 text-green-400' :
-                                                            order.status === 'Processing' ? 'bg-blue-500/20 text-blue-400' :
-                                                                'bg-red-500/20 text-red-400'
+                                                        order.status === 'Processing' ? 'bg-blue-500/20 text-blue-400' :
+                                                            'bg-red-500/20 text-red-400'
                                                         }`}>
                                                         {order.status}
                                                     </span>
