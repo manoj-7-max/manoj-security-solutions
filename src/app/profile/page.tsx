@@ -8,6 +8,7 @@ import ClientProfileForm from "./client-profile-form";
 import dbConnect from "@/lib/db";
 import Booking from "@/models/Booking";
 import UserModel from "@/models/User";
+import Order from "@/models/Order";
 
 export const metadata = {
     title: "My Profile | Manoj Security Solutions",
