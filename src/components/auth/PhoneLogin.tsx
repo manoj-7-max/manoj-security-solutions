@@ -19,6 +19,7 @@ export default function PhoneLogin() {
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
     const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
+    const [errorMessage, setErrorMessage] = useState("");
     const router = useRouter();
 
     useEffect(() => {
@@ -57,10 +58,17 @@ export default function PhoneLogin() {
             console.error(error);
             if (error.code === 'auth/invalid-phone-number') {
                 toast.error("Invalid phone number format.");
+                setErrorMessage("Invalid phone number format. Use E.164 format (e.g. +91...)");
             } else if (error.code === 'auth/missing-client-identifier') {
-                toast.error("Firebase Config Missing. Check src/lib/firebase.ts");
+                toast.error("Firebase Config Missing.");
+                setErrorMessage("Firebase Config Missing. Check src/lib/firebase.ts");
+            } else if (error.code === 'auth/billing-not-enabled') {
+                setErrorMessage("Firebase Free Plan (Spark) limit reached or SMS disabled. Please upgrade to Blaze plan (free tier available) or use Test Numbers.");
+            } else if (error.code === 'auth/quota-exceeded') {
+                setErrorMessage("SMS Quota Exceeded. Try again tomorrow or use Test Numbers.");
             } else {
-                toast.error("Failed to send SMS: " + error.message);
+                toast.error("Failed to send SMS.");
+                setErrorMessage("Error: " + error.message);
             }
         }
         setLoading(false);
@@ -123,6 +131,11 @@ export default function PhoneLogin() {
                         {loading ? "Sending..." : "Send OTP"}
                     </button>
 
+                    {errorMessage && (
+                        <div className="p-3 bg-red-50 text-red-600 border border-red-200 rounded text-sm mt-3">
+                            {errorMessage}
+                        </div>
+                    )}
                 </form>
             ) : (
                 <form onSubmit={handleVerifyOtp} className="space-y-4">
