@@ -1,12 +1,13 @@
 
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { Calendar, MapPin, Clock, CheckCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-export default function BookingPage({ params }: { params: { id: string } }) {
+export default function BookingPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = use(params);
     const router = useRouter();
     const [service, setService] = useState<any>(null);
     const [loading, setLoading] = useState(true);
@@ -20,7 +21,7 @@ export default function BookingPage({ params }: { params: { id: string } }) {
         fetch('/api/services') // In real app, fetch specific ID
             .then(res => res.json())
             .then(data => {
-                const found = data.find((s: any) => s._id === params.id);
+                const found = data.find((s: any) => s._id === id);
                 setService(found);
                 setLoading(false);
             })
@@ -28,7 +29,7 @@ export default function BookingPage({ params }: { params: { id: string } }) {
                 console.error(err);
                 setLoading(false);
             });
-    }, [params.id]);
+    }, [id]);
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -39,7 +40,7 @@ export default function BookingPage({ params }: { params: { id: string } }) {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    serviceId: params.id,
+                    serviceId: id,
                     serviceName: service?.name,
                     date,
                     time,
