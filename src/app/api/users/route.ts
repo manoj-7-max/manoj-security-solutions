@@ -11,7 +11,7 @@ export async function GET(req: Request) {
 
         // Security check - only admins can fetch all users
         const session = await getServerSession(authOptions);
-        if ((session?.user as any)?.role !== "admin") {
+        if ((session as any)?.user?.role !== "admin") {
             return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
         }
 
@@ -28,7 +28,7 @@ export async function POST(req: Request) {
 
         // Security check
         const session = await getServerSession(authOptions);
-        if ((session?.user as any)?.role !== "admin") {
+        if ((session as any)?.user?.role !== "admin") {
             return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
         }
 

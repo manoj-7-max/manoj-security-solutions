@@ -8,8 +8,8 @@ export async function GET(req: Request) {
     try {
         await dbConnect();
         const session = await getServerSession(authOptions);
-        const userId = (session?.user as any)?.id;
-        const userRole = (session?.user as any)?.role;
+        const userId = (session as any)?.user?.id;
+        const userRole = (session as any)?.user?.role;
 
         let query = {};
         // If technician, only show their assigned jobs
@@ -30,7 +30,7 @@ export async function POST(req: Request) {
 
         // Security check - super admin and staff can create jobs
         const session = await getServerSession(authOptions);
-        const userRole = (session?.user as any)?.role;
+        const userRole = (session as any)?.user?.role;
 
         if (userRole !== "admin" && userRole !== "staff") {
             return NextResponse.json({ error: "Unauthorized" }, { status: 403 });

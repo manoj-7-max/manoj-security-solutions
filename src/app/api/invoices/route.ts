@@ -24,7 +24,7 @@ export async function POST(req: Request) {
         if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
         const data = await req.json();
-        data.createdBy = session.user?.email || "Admin";
+        data.createdBy = (session as any).user?.email || "Admin";
 
         const newInvoice = await Invoice.create(data);
         return NextResponse.json({ message: "Invoice generated successfully!", invoice: newInvoice }, { status: 201 });

@@ -14,8 +14,8 @@ export async function GET(req: Request) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const userEmail = session.user.email;
-        const userName = session.user.name;
+        const userEmail = (session as any).user?.email;
+        const userName = (session as any).user?.name;
 
         // Fetch bookings (Leads) for this user by email
         const bookings = await Lead.find({ email: userEmail }).sort({ createdAt: -1 });

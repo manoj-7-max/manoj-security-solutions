@@ -25,7 +25,7 @@ export async function POST(req: Request) {
         if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
         const data = await req.json();
-        data.createdBy = session.user?.email || "Admin";
+        data.createdBy = (session as any).user?.email || "Admin";
 
         const newQuote = await Quotation.create(data);
         return NextResponse.json({ message: "Quotation generated successfully!", quotation: newQuote }, { status: 201 });
