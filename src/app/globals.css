@@ -1,26 +1,78 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-background: #000000;
+  --color-foreground: #ffffff;
+
+  --color-primary: #d4af37;
+  /* Luxury Gold */
+  --color-primary-foreground: #000000;
+
+  --color-secondary: #1a1a1a;
+  --color-secondary-foreground: #ffffff;
+
+  --color-accent: #2c2512;
+  --color-accent-foreground: #d4af37;
+
+  --color-border: #333333;
+  --color-input: #262626;
+  --color-ring: #d4af37;
+
+  --font-sans: "Inter", var(--font-inter), sans-serif;
+  --font-display: "Clash Display", var(--font-inter), sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    @apply antialiased selection:bg-yellow-600/30 selection:text-yellow-100;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+
+  /* Luxury Gold Gradient */
+  .gold-gradient {
+    @apply bg-gradient-to-r from-yellow-300 via-[#d4af37] to-yellow-600;
+  }
+
+  .gold-gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-yellow-200 via-[#d4af37] to-yellow-600;
+  }
+
+  /* Glassmorphism Classes */
+  .glass-panel {
+    @apply bg-[#0a0a0a]/80 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_0_#d4af370d];
+  }
+
+  .glass-card {
+    @apply bg-[#111]/60 backdrop-blur-lg border border-white/5 rounded-2xl hover:border-[#d4af37]/30 transition-all duration-300 hover:shadow-[0_0_30px_#d4af371a];
+  }
+
+  .btn-gold {
+    @apply relative overflow-hidden bg-gradient-to-r from-[#d4af37] to-yellow-600 text-black font-bold px-8 py-4 rounded-xl shadow-[0_0_20px_#d4af374d] hover:shadow-[0_0_30px_#d4af3780] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300;
+  }
+
+  .btn-gold-outline {
+    @apply relative overflow-hidden bg-transparent border border-[#d4af37] text-[#d4af37] font-bold px-8 py-4 rounded-xl hover:bg-[#d4af37]/10 transition-all duration-300;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #d4af37;
 }
