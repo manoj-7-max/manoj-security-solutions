@@ -1,133 +1,159 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Copy, Plus, MoreVertical, Loader2, Navigation, MapPin, Tag, PackageCheck, AlertCircle } from "lucide-react";
+import Link from "next/link";
+import { PackageCheck, Calendar, FileText, CheckSquare, ArrowRight, MapPin, Clock, CheckCircle2, Loader2, AlertCircle, Phone, MessageSquare } from "lucide-react";
+
+const TRACK_STEPS = ["Order Received", "Technician Assigned", "Installation In Progress", "Completed"];
+
+function TrackingTimeline({ status }: { status: string }) {
+    const stepMap: Record<string, number> = { pending: 0, assigned: 1, in_progress: 2, completed: 3 };
+    const current = stepMap[status] ?? 0;
+    return (
+        <div className="flex items-center gap-0 mt-4">
+            {TRACK_STEPS.map((step, i) => (
+                <div key={i} className="flex items-center flex-1 last:flex-none">
+                    <div className="flex flex-col items-center">
+                        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-all ${i <= current ? "border-[#00d4ff] text-[#00d4ff]" : "border-zinc-700 text-zinc-700"}`}
+                            style={i <= current ? { background: "rgba(0,212,255,0.1)" } : {}}>
+                            {i < current ? <CheckCircle2 className="w-4 h-4" style={{ color: "#22c55e" }} /> : i + 1}
+                        </div>
+                        <span className="text-[9px] text-zinc-500 mt-1 text-center w-16 leading-tight uppercase tracking-wide">{step}</span>
+                    </div>
+                    {i < TRACK_STEPS.length - 1 && (
+                        <div className="flex-1 h-0.5 mx-1 mb-5 rounded" style={{ background: i < current ? "#00d4ff" : "rgba(255,255,255,0.08)" }} />
+                    )}
+                </div>
+            ))}
+        </div>
+    );
+}
 
 export default function UserDashboard() {
-    const [bookings, setBookings] = useState<any[]>([]);
     const [orders, setOrders] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
-    const fetchMyData = async () => {
-        try {
-            setLoading(true);
-            const res = await fetch("/api/orders");
-            const data = await res.json();
-            if (data.bookings) setBookings(data.bookings);
-            if (data.orders) setOrders(data.orders);
-        } catch (e) {
-            console.error("Failed to load user data", e);
-        } finally {
-            setLoading(false);
-        }
-    };
-
     useEffect(() => {
-        fetchMyData();
+        fetch("/api/orders").then(r => r.json()).then(d => {
+            if (d.orders) setOrders(d.orders);
+            if (d.bookings) setOrders(prev => [...prev, ...d.bookings]);
+        }).catch(console.error).finally(() => setLoading(false));
     }, []);
 
+    const statusColor: Record<string, string> = {
+        pending: "#eab308", assigned: "#00d4ff", in_progress: "#a855f7", completed: "#22c55e"
+    };
+
     return (
-        <div className="space-y-8 max-w-6xl">
-            <div className="flex items-center justify-between">
+        <div className="space-y-8 max-w-5xl">
+            {/* Header */}
+            <div>
+                <div className="flex items-center gap-2 mb-1">
+                    <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "#00d4ff" }} />
+                    <span className="text-xs uppercase tracking-widest font-bold" style={{ color: "#00d4ff" }}>Customer Portal</span>
+                </div>
+                <h2 className="text-3xl font-bold text-white">My Service Dashboard</h2>
+                <p className="text-zinc-500 text-sm mt-1">Track your installations, bookings, and security services.</p>
+            </div>
+
+            {/* Quick action cards */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {[
+                    { icon: PackageCheck, label: "My Orders", sub: "Track installations", href: "#orders", color: "#00d4ff" },
+                    { icon: Calendar, label: "Book Service", sub: "Schedule a visit", href: "/user/booking", color: "#d4af37" },
+                    { icon: FileText, label: "Quotations", sub: "View proposals", href: "/user/quotations", color: "#a855f7" },
+                    { icon: CheckSquare, label: "AMC Plans", sub: "Annual maintenance", href: "/user/amc", color: "#22c55e" },
+                ].map((c, i) => (
+                    <Link key={i} href={c.href} className="p-5 rounded-2xl flex flex-col gap-3 group hover:-translate-y-1 transition-all" style={{ background: "rgba(8,15,26,0.6)", border: `1px solid rgba(255,255,255,0.06)` }}
+                        onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = c.color + "30"}
+                        onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.06)"}
+                    >
+                        <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: c.color + "12" }}>
+                            <c.icon className="w-5 h-5" style={{ color: c.color }} />
+                        </div>
+                        <div>
+                            <p className="font-bold text-white text-sm">{c.label}</p>
+                            <p className="text-zinc-600 text-xs">{c.sub}</p>
+                        </div>
+                        <ArrowRight className="w-4 h-4 mt-auto opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: c.color }} />
+                    </Link>
+                ))}
+            </div>
+
+            {/* Support banner */}
+            <div className="rounded-2xl p-5 flex flex-col md:flex-row items-center justify-between gap-4" style={{ background: "linear-gradient(135deg, rgba(0,212,255,0.06), rgba(212,175,55,0.04))", border: "1px solid rgba(0,212,255,0.15)" }}>
                 <div>
-                    <h2 className="text-3xl font-display font-medium text-white mb-2">My Service Portal</h2>
-                    <p className="text-zinc-500 font-light text-sm tracking-wider">Track your recent bookings, inquiries, and installations.</p>
+                    <p className="font-bold text-white">Need help or have a question?</p>
+                    <p className="text-zinc-400 text-sm">Our team is available Mon–Sat, 9AM–7PM. Call or WhatsApp anytime.</p>
+                </div>
+                <div className="flex gap-3 shrink-0">
+                    <a href="tel:+919944305980" className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider" style={{ background: "linear-gradient(135deg,#d4af37,#b8860b)", color: "#000" }}>
+                        <Phone className="w-4 h-4" /> Call Now
+                    </a>
+                    <a href="https://wa.me/919944305980" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider" style={{ background: "rgba(37,211,102,0.1)", color: "#25d366", border: "1px solid rgba(37,211,102,0.2)" }}>
+                        <MessageSquare className="w-4 h-4" /> WhatsApp
+                    </a>
                 </div>
             </div>
 
-            {loading ? (
-                <div className="h-64 flex flex-col items-center justify-center space-y-4">
-                    <Loader2 className="w-8 h-8 text-[#d4af37] animate-spin" />
-                    <p className="text-zinc-500 text-xs uppercase tracking-widest font-bold">Fetching Your Data...</p>
-                </div>
-            ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-
-                    {/* Active Installations / Orders */}
+            {/* Orders */}
+            <div id="orders">
+                <h3 className="text-xs font-bold uppercase tracking-widest mb-5 flex items-center gap-2" style={{ color: "#00d4ff" }}>
+                    <PackageCheck className="w-4 h-4" /> My Active Installations & Jobs
+                </h3>
+                {loading ? (
+                    <div className="flex items-center justify-center py-16">
+                        <Loader2 className="w-6 h-6 animate-spin" style={{ color: "#00d4ff" }} />
+                    </div>
+                ) : orders.length === 0 ? (
+                    <div className="rounded-2xl p-12 flex flex-col items-center text-center" style={{ background: "rgba(8,15,26,0.4)", border: "1px solid rgba(255,255,255,0.05)" }}>
+                        <AlertCircle className="w-10 h-10 text-zinc-700 mb-4" />
+                        <p className="text-zinc-400 font-medium mb-1">No active installations yet.</p>
+                        <p className="text-zinc-600 text-sm">Once our team dispatches a technician, your job will appear here with a live tracker.</p>
+                        <Link href="/user/booking" className="mt-6 px-6 py-3 rounded-xl font-bold text-xs uppercase tracking-widest" style={{ background: "linear-gradient(135deg,#d4af37,#b8860b)", color: "#000" }}>
+                            Book Your First Installation
+                        </Link>
+                    </div>
+                ) : (
                     <div className="space-y-4">
-                        <h3 className="text-xs uppercase font-bold tracking-widest text-[#d4af37] mb-4 flex items-center gap-2">
-                            <PackageCheck className="w-4 h-4" /> Active Installations & Orders
-                        </h3>
-                        {orders.length === 0 ? (
-                            <div className="bg-[#111] border border-white/5 rounded-2xl p-8 flex flex-col items-center text-center">
-                                <AlertCircle className="w-10 h-10 text-zinc-600 mb-4" />
-                                <p className="text-zinc-400 font-medium">No active installations found.</p>
-                                <p className="text-zinc-600 text-xs mt-1">Once our team dispatches a technician, it will appear here.</p>
-                            </div>
-                        ) : (
-                            orders.map((order) => (
-                                <div key={order._id} className="bg-[#111] p-6 rounded-2xl border border-[#d4af37]/20 relative overflow-hidden group">
-                                    <div className="absolute top-0 right-0 w-24 h-24 bg-[#d4af37]/5 rounded-bl-full pointer-events-none"></div>
-                                    <h4 className="text-white font-medium text-lg leading-tight w-[80%] mb-3">{order.title}</h4>
-
-                                    <div className="space-y-2 mb-4">
-                                        <div className="flex items-start gap-3 text-sm text-zinc-400">
-                                            <MapPin className="w-4 h-4 text-zinc-500 mt-0.5 shrink-0" />
-                                            <span className="leading-snug">{order.address}</span>
-                                        </div>
-                                        {/* Status */}
-                                        <div className="flex items-center gap-2 mt-2">
-                                            <span className="text-[10px] text-zinc-600 uppercase font-bold tracking-widest">Status:</span>
-                                            <span className={`text-xs px-2 py-0.5 rounded font-bold uppercase tracking-wider ${order.status === 'pending' ? 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20' :
-                                                    order.status === 'in_progress' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' :
-                                                        order.status === 'completed' ? 'bg-green-500/10 text-green-500 border border-green-500/20' :
-                                                            'bg-zinc-800 text-zinc-400'
-                                                }`}>
-                                                {order.status.replace("_", " ")}
+                        {orders.map((order: any) => (
+                            <div key={order._id} className="rounded-2xl p-6 relative overflow-hidden" style={{ background: "rgba(8,15,26,0.6)", border: "1px solid rgba(0,212,255,0.12)" }}>
+                                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                                    <div className="flex-1">
+                                        <div className="flex items-center gap-3 mb-3">
+                                            <h4 className="font-bold text-white text-lg">{order.title || order.service || "Installation Job"}</h4>
+                                            <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full" style={{ background: (statusColor[order.status] || "#aaa") + "15", color: statusColor[order.status] || "#aaa", border: `1px solid ${statusColor[order.status] || "#aaa"}30` }}>
+                                                {(order.status || "pending").replace("_", " ")}
                                             </span>
                                         </div>
+                                        <div className="flex items-start gap-2 text-sm text-zinc-400 mb-2">
+                                            <MapPin className="w-4 h-4 shrink-0 mt-0.5" style={{ color: "#00d4ff" }} />
+                                            <span>{order.address || "Address not specified"}</span>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-xs text-zinc-500">
+                                            <Clock className="w-3.5 h-3.5" />
+                                            <span>Created {new Date(order.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</span>
+                                        </div>
                                     </div>
-                                    {order.notes && (
-                                        <div className="bg-black/50 border border-white/5 p-3 rounded-lg mt-4 text-xs text-zinc-400">
-                                            <span className="font-bold text-zinc-500 uppercase tracking-widest text-[9px] block mb-1">Updates</span>
-                                            {order.notes}
+                                    {order.assignedTo && (
+                                        <div className="shrink-0 px-4 py-3 rounded-xl text-sm" style={{ background: "rgba(0,212,255,0.05)", border: "1px solid rgba(0,212,255,0.1)" }}>
+                                            <p className="text-[10px] uppercase tracking-widest text-zinc-500 mb-1">Your Technician</p>
+                                            <p className="font-bold text-white">{order.assignedTo?.name || "Assigned"}</p>
                                         </div>
                                     )}
                                 </div>
-                            ))
-                        )}
-                    </div>
-
-                    {/* Bookings / Lead Requests */}
-                    <div className="space-y-4">
-                        <h3 className="text-xs uppercase font-bold tracking-widest text-zinc-500 mb-4 flex items-center gap-2">
-                            <Tag className="w-4 h-4" /> My Consultation Requests
-                        </h3>
-                        {bookings.length === 0 ? (
-                            <div className="bg-[#111] border border-white/5 rounded-2xl p-8 flex flex-col items-center text-center">
-                                <p className="text-zinc-500 font-medium">You haven't requested any consultations yet.</p>
+                                <TrackingTimeline status={order.status || "pending"} />
+                                {order.notes && (
+                                    <div className="mt-4 p-3 rounded-xl text-xs text-zinc-400" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)" }}>
+                                        <span className="font-bold text-zinc-500 uppercase tracking-widest text-[9px] block mb-1">Latest Update</span>
+                                        {order.notes}
+                                    </div>
+                                )}
                             </div>
-                        ) : (
-                            bookings.map((booking) => (
-                                <div key={booking._id} className="bg-[#1A1A1A] p-5 rounded-2xl border border-white/5 flex flex-col justify-between">
-                                    <div className="flex justify-between items-start mb-3">
-                                        <div>
-                                            <p className="text-[10px] text-zinc-600 uppercase font-bold tracking-widest mb-1">Service Requested</p>
-                                            <h4 className="text-white font-medium text-sm">{booking.service}</h4>
-                                        </div>
-                                        <span className={`text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-widest border ${booking.status === 'new' ? 'bg-zinc-800 text-white border-white/10' :
-                                                booking.status === 'scheduled' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
-                                                    booking.status === 'quoted' ? 'bg-[#d4af37]/10 text-[#d4af37] border-[#d4af37]/30' :
-                                                        booking.status === 'won' ? 'bg-green-500/10 text-green-500 border-green-500/20' :
-                                                            'bg-red-500/10 text-red-400 border-red-500/20'
-                                            }`}>
-                                            {booking.status}
-                                        </span>
-                                    </div>
-                                    <div className="text-xs text-zinc-500 mb-2">
-                                        <span className="font-mono text-zinc-400">Date:</span> {new Date(booking.createdAt).toLocaleDateString()}
-                                    </div>
-                                    {booking.message && (
-                                        <p className="text-xs text-zinc-400 italic bg-black/30 p-2 rounded">
-                                            "{booking.message}"
-                                        </p>
-                                    )}
-                                </div>
-                            ))
-                        )}
+                        ))}
                     </div>
-                </div>
-            )}
+                )}
+            </div>
         </div>
     );
 }
