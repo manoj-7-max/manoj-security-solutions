@@ -7,18 +7,22 @@ export default function CMSManager() {
         <div className="space-y-8 max-w-5xl">
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-3xl font-display font-medium mb-2 text-white">Platform Configurations</h2>
-                    <p className="text-zinc-500 font-light text-sm">Control website content, SEO, and visual elements.</p>
+                    <div className="flex items-center gap-2 mb-1">
+                        <div className="w-1.5 h-1.5 rounded-full" style={{ background: '#00d4ff' }} />
+                        <span className="text-xs uppercase tracking-widest font-bold" style={{ color: '#00d4ff' }}>Web Settings</span>
+                    </div>
+                    <h2 className="text-3xl font-bold text-white">Platform Settings</h2>
+                    <p className="text-zinc-500 text-sm mt-1">Control website content, SEO, and contact details.</p>
                 </div>
-                <button className="bg-white text-black font-bold px-5 py-3 rounded-xl flex items-center gap-2 hover:bg-[#d4af37] transition-all shadow-[0_0_20px_rgba(212,175,55,0.4)]">
+                <button className="font-bold px-5 py-3 rounded-xl flex items-center gap-2 transition-all" style={{ background: 'linear-gradient(135deg,#d4af37,#f5e27d,#b8860b)', color: '#000' }}>
                     <Save className="w-5 h-5" /> Save Changes
                 </button>
             </div>
 
-            <div className="bg-[#111] p-8 rounded-2xl border border-white/5 space-y-8">
+            <div className="p-8 rounded-2xl space-y-8" style={{ background: 'rgba(8,15,26,0.6)', border: '1px solid rgba(0,212,255,0.1)' }}>
                 <div>
-                    <h3 className="text-[#d4af37] text-xs font-bold tracking-[0.2em] uppercase mb-6 flex items-center gap-4">
-                        <span className="w-6 h-[1px] bg-[#d4af37]" /> Core Identity
+                    <h3 className="text-xs font-bold tracking-[0.2em] uppercase mb-6 flex items-center gap-4" style={{ color: '#00d4ff' }}>
+                        <span className="w-6 h-[1px]" style={{ background: '#00d4ff' }} /> Core Identity
                     </h3>
 
                     <div className="grid md:grid-cols-2 gap-6">

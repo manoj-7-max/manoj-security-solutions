@@ -96,21 +96,22 @@ export default function ProductsDB() {
         <div className="space-y-8 max-w-6xl">
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-3xl font-display font-medium text-white mb-2">Hardware Inventory</h2>
-                    <p className="text-zinc-500 font-light text-sm tracking-wider">Manage products, pricing, and stock levels.</p>
+                    <div className="flex items-center gap-2 mb-1"><div className="w-1.5 h-1.5 rounded-full" style={{ background: '#00d4ff' }} /><span className="text-xs uppercase tracking-widest font-bold" style={{ color: '#00d4ff' }}>Product Database</span></div>
+                    <h2 className="text-3xl font-bold text-white">Hardware Inventory</h2>
+                    <p className="text-zinc-500 text-sm mt-1">Manage products, pricing, and stock levels.</p>
                 </div>
                 {canEdit && (
-                    <button onClick={() => { setEditingId(null); setModalOpen(true); }} className="bg-[#d4af37] text-black font-bold px-5 py-3 rounded-xl flex items-center gap-2 hover:bg-yellow-500 transition-colors shadow-[0_0_20px_rgba(212,175,55,0.3)]">
+                    <button onClick={() => { setEditingId(null); setModalOpen(true); }} className="font-bold px-5 py-3 rounded-xl flex items-center gap-2 transition-all" style={{ background: 'linear-gradient(135deg,#d4af37,#f5e27d,#b8860b)', color: '#000', boxShadow: '0 0 20px rgba(212,175,55,0.3)' }}>
                         <Plus className="w-5 h-5" /> Add Product
                     </button>
                 )}
             </div>
 
-            <div className="bg-[#111] border border-white/5 rounded-2xl p-4 overflow-hidden">
+            <div className="rounded-2xl p-4" style={{ background: 'rgba(8,15,26,0.6)', border: '1px solid rgba(0,212,255,0.1)' }}>
                 <div className="flex justify-between items-center mb-6">
                     <div className="relative w-72">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
-                        <input type="text" placeholder="Search product DB..." className="w-full pl-10 pr-4 py-2 bg-[#1a1a1a] border border-white/10 rounded-xl focus:border-[#d4af37]/50 focus:outline-none text-white text-sm" />
+                        <input type="text" placeholder="Search product DB..." className="w-full pl-10 pr-4 py-2 rounded-xl focus:outline-none text-white text-sm" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }} />
                     </div>
                 </div>
 
@@ -121,9 +122,9 @@ export default function ProductsDB() {
                         <div className="col-span-full h-32 flex items-center justify-center text-zinc-500 font-mono text-xs uppercase tracking-widest">No products found.</div>
                     ) : (
                         products.map((product) => (
-                            <div onClick={() => openEditModal(product)} key={product._id} className="bg-[#1a1a1a] p-5 rounded-2xl border border-white/5 hover:border-[#d4af37]/30 transition-all group flex flex-col h-full cursor-pointer relative">
-                                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/80 px-2 py-1 rounded text-xs text-[#d4af37] font-bold">Edit</div>
-                                <div className="w-full aspect-video bg-black/50 rounded-xl mb-4 flex items-center justify-center border border-white/5 group-hover:border-[#d4af37]/20 transition-colors overflow-hidden">
+                            <div onClick={() => openEditModal(product)} key={product._id} className="p-5 rounded-2xl group flex flex-col h-full cursor-pointer relative transition-all hover:-translate-y-1" style={{ background: 'rgba(13,17,23,0.8)', border: '1px solid rgba(0,212,255,0.08)' }}>
+                                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity px-2 py-1 rounded text-xs font-bold" style={{ background: 'rgba(0,212,255,0.15)', color: '#00d4ff' }}>Edit</div>
+                                <div className="w-full aspect-video rounded-xl mb-4 flex items-center justify-center overflow-hidden" style={{ background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.05)' }}>
                                     {product.image ? (
                                         <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
                                     ) : (
@@ -131,13 +132,13 @@ export default function ProductsDB() {
                                     )}
                                 </div>
                                 <div className="flex items-center justify-between mb-2">
-                                    <span className="text-[10px] font-bold tracking-widest text-[#d4af37] uppercase bg-[#d4af37]/10 px-2 py-0.5 rounded-full">{product.category}</span>
+                                    <span className="text-[10px] font-bold tracking-widest uppercase px-2 py-0.5 rounded-full" style={{ background: 'rgba(0,212,255,0.1)', color: '#00d4ff', border: '1px solid rgba(0,212,255,0.2)' }}>{product.category}</span>
                                     <span className="text-xs text-zinc-500 font-mono tracking-wider">Qty: {product.stock}</span>
                                 </div>
                                 <h3 className="text-white font-medium text-sm leading-tight mb-4 flex-1">{product.name}</h3>
-                                <div className="flex items-end justify-between border-t border-white/5 pt-3">
+                                <div className="flex items-end justify-between pt-3" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
                                     <span className="text-xs text-zinc-500">Base Rate</span>
-                                    <span className="text-lg font-mono font-bold text-white">₹{product.basePrice.toLocaleString()}</span>
+                                    <span className="text-lg font-mono font-bold gold-gradient-text">₹{product.basePrice.toLocaleString()}</span>
                                 </div>
                             </div>
                         ))

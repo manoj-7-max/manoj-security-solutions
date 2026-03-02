@@ -3,15 +3,13 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import {
-    LayoutDashboard, Users, FileText, Camera, CheckSquare, Settings, LogOut, Receipt, Network, UserCog, Briefcase, UserRound
+    LayoutDashboard, Users, FileText, Camera, CheckSquare, Settings,
+    LogOut, Receipt, UserCog, Briefcase, UserRound, Shield, ChevronRight
 } from "lucide-react";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
     const session = await getServerSession(authOptions) as any;
-
-    if (!session) {
-        redirect("/login");
-    }
+    if (!session) redirect("/login");
 
     const userRole = (session.user as any)?.role || "staff";
 
@@ -46,25 +44,52 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     }
 
     return (
-        <div className="min-h-screen bg-[#050505] text-white flex">
+        <div className="min-h-screen text-white flex" style={{ background: "#020408" }}>
             {/* Sidebar */}
-            <aside className="w-72 bg-[#111] border-r border-white/5 hidden md:flex flex-col">
-                <div className="p-8 border-b border-white/5">
-                    <Link href="/" className="inline-flex gap-3 items-center">
-                        <div className="w-10 h-10 rounded-full overflow-hidden bg-black border border-white/10 flex items-center justify-center shrink-0">
-                            <img src="/logo.png" alt="Manoj Security Solutions" className="w-full h-full object-cover" />
-                        </div>
-                        <span className="font-display font-medium text-lg tracking-wider">COMMAND<span className="text-zinc-600">.</span></span>
-                    </Link>
-                    <p className="text-[10px] uppercase tracking-widest text-[#d4af37] mt-2 font-bold">Manoj Security</p>
+            <aside className="w-72 hidden md:flex flex-col" style={{ background: "#080f1a", borderRight: "1px solid rgba(0,212,255,0.08)" }}>
+                {/* Logo */}
+                <div className="p-6 flex items-center gap-3" style={{ borderBottom: "1px solid rgba(0,212,255,0.08)" }}>
+                    <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style={{ background: "rgba(0,212,255,0.08)", border: "1px solid rgba(0,212,255,0.2)" }}>
+                        <Shield className="w-5 h-5" style={{ color: "#00d4ff" }} />
+                    </div>
+                    <div>
+                        <Link href="/" className="font-bold text-white text-sm uppercase tracking-widest leading-none hover:text-[#00d4ff] transition-colors">
+                            Manoj Security
+                        </Link>
+                        <p className="text-[9px] uppercase tracking-[0.25em] font-bold mt-0.5" style={{ color: "#00d4ff" }}>
+                            COMMAND CENTER
+                        </p>
+                    </div>
                 </div>
 
-                <nav className="flex-1 overflow-y-auto py-6">
-                    <ul className="space-y-1 px-4">
+                {/* Role badge */}
+                <div className="px-5 py-3">
+                    <span className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full" style={{ background: "rgba(212,175,55,0.1)", border: "1px solid rgba(212,175,55,0.2)", color: "#d4af37" }}>
+                        ● {userRole} Portal
+                    </span>
+                </div>
+
+                {/* Nav */}
+                <nav className="flex-1 overflow-y-auto py-4 px-4">
+                    <ul className="space-y-1">
                         {menuItems.map((item, i) => (
                             <li key={i}>
-                                <Link href={item.href} className="flex items-center gap-4 px-4 py-3 text-zinc-400 hover:text-white hover:bg-white/5 rounded-xl transition-all font-medium text-sm group">
-                                    <item.icon className="w-5 h-5 text-zinc-500 group-hover:text-[#d4af37] transition-colors" />
+                                <Link
+                                    href={item.href}
+                                    className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-sm font-medium group"
+                                    style={{ color: "rgba(255,255,255,0.5)" }}
+                                    onMouseEnter={e => {
+                                        (e.currentTarget as HTMLElement).style.background = "rgba(0,212,255,0.05)";
+                                        (e.currentTarget as HTMLElement).style.color = "#fff";
+                                        (e.currentTarget as HTMLElement).style.borderLeft = "2px solid #00d4ff";
+                                    }}
+                                    onMouseLeave={e => {
+                                        (e.currentTarget as HTMLElement).style.background = "";
+                                        (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.5)";
+                                        (e.currentTarget as HTMLElement).style.borderLeft = "";
+                                    }}
+                                >
+                                    <item.icon className="w-4 h-4 shrink-0" style={{ color: "#00d4ff", opacity: 0.7 }} />
                                     {item.label}
                                 </Link>
                             </li>
@@ -72,34 +97,45 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                     </ul>
                 </nav>
 
-                <div className="p-6 border-t border-white/5">
-                    <Link href="/api/auth/signout" className="flex items-center gap-4 px-4 py-3 text-red-500 hover:bg-red-950/30 rounded-xl transition-all font-medium text-sm group">
-                        <LogOut className="w-5 h-5" />
-                        Sign Out
+                {/* Bottom: user info + signout */}
+                <div className="p-4" style={{ borderTop: "1px solid rgba(0,212,255,0.08)" }}>
+                    <div className="px-4 py-3 rounded-xl mb-2" style={{ background: "rgba(255,255,255,0.03)" }}>
+                        <p className="text-sm font-medium text-white truncate">{session.user?.name}</p>
+                        <p className="text-xs text-zinc-500 truncate">{session.user?.email}</p>
+                    </div>
+                    <Link
+                        href="/api/auth/signout"
+                        className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-red-950/30"
+                        style={{ color: "rgba(239,68,68,0.7)" }}
+                    >
+                        <LogOut className="w-4 h-4" /> Sign Out
                     </Link>
                 </div>
             </aside>
 
-            {/* Main Content Area */}
+            {/* Main */}
             <main className="flex-1 flex flex-col min-h-screen overflow-hidden">
-                <header className="h-20 border-b border-white/5 bg-[#111]/80 backdrop-blur-md px-8 flex items-center justify-between z-10 sticky top-0">
-                    <div>
-                        <h1 className="font-display text-xl font-medium">Dashboard</h1>
-                        <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest">{userRole} Portal</p>
+                {/* Top bar */}
+                <header className="h-16 flex items-center justify-between px-8 sticky top-0 z-10" style={{ background: "rgba(8,15,26,0.9)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(0,212,255,0.08)" }}>
+                    <div className="flex items-center gap-2 text-sm text-zinc-500">
+                        <span className="text-zinc-600">Portal</span>
+                        <ChevronRight className="w-3 h-3" />
+                        <span className="text-white font-medium capitalize">{userRole}</span>
                     </div>
                     <div className="flex items-center gap-4">
                         <div className="text-right hidden md:block">
-                            <p className="text-sm font-medium">{session.user?.name}</p>
+                            <p className="text-sm font-semibold text-white">{session.user?.name}</p>
                             <p className="text-xs text-zinc-500">{session.user?.email}</p>
                         </div>
-                        <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center bg-[#d4af37]/10 text-[#d4af37] font-bold uppercase">
-                            {session.user?.name?.[0] || 'U'}
+                        <div className="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm uppercase" style={{ background: "linear-gradient(135deg, rgba(0,212,255,0.2), rgba(212,175,55,0.2))", border: "1px solid rgba(0,212,255,0.3)", color: "#00d4ff" }}>
+                            {session.user?.name?.[0] || "U"}
                         </div>
                     </div>
                 </header>
+
+                {/* Content */}
                 <div className="flex-1 overflow-y-auto p-8 relative">
-                    {/* Ambient Background for sub-routes */}
-                    <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#d4af37]/5 blur-[120px] rounded-full pointer-events-none -z-10"></div>
+                    <div className="absolute top-0 right-0 w-[600px] h-[400px] pointer-events-none" style={{ background: "radial-gradient(ellipse at top right, rgba(0,212,255,0.03), transparent 70%)" }} />
                     {children}
                 </div>
             </main>
