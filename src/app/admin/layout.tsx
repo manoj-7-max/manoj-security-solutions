@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import {
-    LayoutDashboard, Users, FileText, Camera, CheckSquare, Settings, LogOut, Receipt, Network, UserCog, Briefcase
+    LayoutDashboard, Users, FileText, Camera, CheckSquare, Settings, LogOut, Receipt, Network, UserCog, Briefcase, UserRound
 } from "lucide-react";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -21,7 +21,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         menuItems = [
             { icon: LayoutDashboard, label: "Overview", href: "/admin" },
             { icon: UserCog, label: "User Management", href: "/admin/users" },
-            { icon: Users, label: "CRM Leads", href: "/admin/crm" },
+            { icon: UserRound, label: "Customers", href: "/admin/customers" },
+            { icon: Users, label: "CRM Pipeline", href: "/admin/crm" },
             { icon: FileText, label: "Quotations", href: "/admin/quotations" },
             { icon: Receipt, label: "Invoices", href: "/admin/invoices" },
             { icon: Camera, label: "Product DB", href: "/admin/products" },
@@ -32,7 +33,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     } else if (userRole === "staff") {
         menuItems = [
             { icon: LayoutDashboard, label: "Overview", href: "/admin" },
-            { icon: Users, label: "CRM Leads", href: "/admin/crm" },
+            { icon: UserRound, label: "Customers", href: "/admin/customers" },
+            { icon: Users, label: "CRM Pipeline", href: "/admin/crm" },
             { icon: FileText, label: "Quotations", href: "/admin/quotations" },
             { icon: Receipt, label: "Invoices", href: "/admin/invoices" },
             { icon: Camera, label: "Product DB", href: "/admin/products" },

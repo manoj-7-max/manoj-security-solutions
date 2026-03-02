@@ -18,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className={`${inter.variable} bg-black text-white antialiased selection:bg-yellow-600/30 selection:text-yellow-100`}>
+      <body suppressHydrationWarning className={`${inter.variable} bg-black text-white antialiased selection:bg-yellow-600/30 selection:text-yellow-100`}>
         <Providers>
           {children}
           <FloatingWhatsApp />
