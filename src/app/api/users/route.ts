@@ -9,9 +9,10 @@ export async function GET(req: Request) {
     try {
         await dbConnect();
 
-        // Security check - only admins can fetch all users
+        // Security check - admins and staff can fetch all users
         const session = await getServerSession(authOptions);
-        if ((session as any)?.user?.role !== "admin") {
+        const userRole = (session as any)?.user?.role;
+        if (userRole !== "admin" && userRole !== "staff") {
             return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
         }
 

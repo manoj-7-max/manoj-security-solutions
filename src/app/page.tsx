@@ -454,10 +454,8 @@ export default function HomePage() {
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div className="relative">
               <div className="w-full max-w-sm mx-auto aspect-square rounded-3xl overflow-hidden relative" style={{ border: "1px solid rgba(0,212,255,0.2)", boxShadow: "0 0 60px rgba(0,212,255,0.1)" }}>
-                <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #0a1628 0%, #050d18 100%)" }} />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <Shield className="w-40 h-40 opacity-10" style={{ color: "#00d4ff" }} />
-                </div>
+                <img src="/founder.jpg" alt="Manoj R - Founder" className="w-full h-full object-cover object-center" />
+                <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(2,4,8,0.9) 0%, transparent 40%)" }} />
                 <div className="absolute bottom-6 left-6 right-6 glass-panel rounded-2xl p-4">
                   <p className="text-white font-bold">Manoj R</p>
                   <p className="text-xs" style={{ color: "#00d4ff" }}>Founder & Lead Security Architect</p>

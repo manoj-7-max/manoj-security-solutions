@@ -36,6 +36,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             { icon: FileText, label: "Quotations", href: "/admin/quotations" },
             { icon: Receipt, label: "Invoices", href: "/admin/invoices" },
             { icon: Camera, label: "Product DB", href: "/admin/products" },
+            { icon: Briefcase, label: "Jobs / Installs", href: "/admin/jobs" },
         ];
     } else if (userRole === "technician") {
         menuItems = [
