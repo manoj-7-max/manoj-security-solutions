@@ -76,20 +76,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                             <li key={i}>
                                 <Link
                                     href={item.href}
-                                    className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-sm font-medium group"
+                                    className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-sm font-medium group hover:bg-[#00d4ff]/5 hover:text-white border-l-2 border-transparent hover:border-[#00d4ff]"
                                     style={{ color: "rgba(255,255,255,0.5)" }}
-                                    onMouseEnter={e => {
-                                        (e.currentTarget as HTMLElement).style.background = "rgba(0,212,255,0.05)";
-                                        (e.currentTarget as HTMLElement).style.color = "#fff";
-                                        (e.currentTarget as HTMLElement).style.borderLeft = "2px solid #00d4ff";
-                                    }}
-                                    onMouseLeave={e => {
-                                        (e.currentTarget as HTMLElement).style.background = "";
-                                        (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.5)";
-                                        (e.currentTarget as HTMLElement).style.borderLeft = "";
-                                    }}
                                 >
-                                    <item.icon className="w-4 h-4 shrink-0" style={{ color: "#00d4ff", opacity: 0.7 }} />
+                                    <item.icon className="w-4 h-4 shrink-0 transition-opacity opacity-70 group-hover:opacity-100" style={{ color: "#00d4ff" }} />
                                     {item.label}
                                 </Link>
                             </li>
