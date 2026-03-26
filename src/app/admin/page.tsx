@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Users, FileText, CheckCircle, TrendingUp, AlertTriangle, Briefcase, ArrowUpRight, Activity, Shield, Camera, Receipt } from "lucide-react";
 import Link from "next/link";
@@ -28,6 +29,34 @@ const ACTIVITY_LOG = [
 ];
 
 export default function AdminDashboard() {
+    const [stats, setStats] = useState(STATS);
+    const [recentActivities, setRecentActivities] = useState(ACTIVITY_LOG);
+
+    useEffect(() => {
+        async function loadDashboardData() {
+            try {
+                const res = await fetch("/api/leads");
+                const data = await res.json();
+                if (data.leads) {
+                    setStats(prev => {
+                        const newStats = [...prev];
+                        newStats[0].value = data.leads.filter((l: any) => l.status !== "won" && l.status !== "lost").length.toString();
+                        return newStats;
+                    });
+                    
+                    const dynamicLogs = data.leads.slice(0, 4).map((l: any) => ({
+                        action: `New enquiry: ${l.name} — ${l.requirement}`,
+                        time: new Date(l.createdAt).toLocaleDateString(),
+                        color: "#d4af37"
+                    }));
+
+                    setRecentActivities([...dynamicLogs, ...ACTIVITY_LOG].slice(0, 6));
+                }
+            } catch (e) {}
+        }
+        loadDashboardData();
+    }, []);
+
     return (
         <div className="space-y-8 max-w-7xl">
             {/* Header */}
@@ -50,7 +79,7 @@ export default function AdminDashboard() {
 
             {/* KPI Stats */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-                {STATS.map((s, i) => (
+                {stats.map((s, i) => (
                     <motion.div
                         key={i}
                         initial={{ opacity: 0, y: 20 }}
@@ -125,7 +154,7 @@ export default function AdminDashboard() {
                         <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
                     </div>
                     <div className="flex-1 space-y-3 overflow-y-auto">
-                        {ACTIVITY_LOG.map((log, i) => (
+                        {recentActivities.map((log, i) => (
                             <div key={i} className="flex gap-4 items-start p-3 rounded-xl hover:bg-white/5 transition-colors">
                                 <div className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0 animate-pulse" style={{ background: log.color }} />
                                 <div>

@@ -92,12 +92,12 @@ const TRUST_STATS = [
 ];
 
 const GALLERY_ITEMS = [
-  { label: "Office Complex — 8 Cameras", cat: "Commercial", gradient: "from-blue-900/60 to-black" },
-  { label: "Apartment Lobby Install", cat: "Residential", gradient: "from-purple-900/60 to-black" },
-  { label: "Warehouse Perimeter Setup", cat: "Industrial", gradient: "from-green-900/60 to-black" },
-  { label: "Villa Premium Package", cat: "Residential", gradient: "from-amber-900/60 to-black" },
-  { label: "School Campus 24-Cam", cat: "Education", gradient: "from-cyan-900/60 to-black" },
-  { label: "Retail Store Security", cat: "Commercial", gradient: "from-red-900/60 to-black" },
+  { label: "Office Complex — 8 Cameras", cat: "Commercial", image: "/gallery/office.png" },
+  { label: "Apartment Lobby Install", cat: "Residential", image: "/gallery/apartment.png" },
+  { label: "Warehouse Perimeter Setup", cat: "Industrial", image: "/gallery/warehouse.png" },
+  { label: "Villa Premium Package", cat: "Residential", image: "/gallery/villa.png" },
+  { label: "School Campus 24-Cam", cat: "Education", image: "/gallery/school.png" },
+  { label: "Retail Store Security", cat: "Commercial", image: "/gallery/retail.png" },
 ];
 
 // ─── COMPONENTS ──────────────────────────────────────────────────────────────
@@ -310,11 +310,12 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {GALLERY_ITEMS.map((g, i) => (
               <div key={i} className={`relative group h-64 rounded-2xl overflow-hidden cursor-pointer ${i === 0 || i === 3 ? "md:h-80" : ""}`} style={{ border: "1px solid rgba(255,255,255,0.06)" }}>
-                <div className={`absolute inset-0 bg-gradient-to-br ${g.gradient} transition-opacity duration-500`} />
-                <div className="absolute inset-0 flex flex-col items-center justify-center opacity-30 group-hover:opacity-60 transition-opacity">
-                  <Camera className="w-16 h-16 text-white/50" />
+                <img src={g.image} alt={g.label} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-40 transition-opacity duration-500">
+                  <Camera className="w-16 h-16 text-white drop-shadow-lg" />
                 </div>
-                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors" />
+                <div className="absolute inset-0 bg-black/50 group-hover:bg-black/30 transition-colors duration-500" />
+                <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black to-transparent pointer-events-none" />
                 <div className="absolute bottom-0 left-0 right-0 p-5 transform translate-y-2 group-hover:translate-y-0 transition-transform">
                   <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full mb-2 inline-block" style={{ background: "rgba(0,212,255,0.15)", color: "#00d4ff", border: "1px solid rgba(0,212,255,0.3)" }}>{g.cat}</span>
                   <p className="text-white font-semibold text-sm">{g.label}</p>
@@ -339,7 +340,7 @@ export default function HomePage() {
           </div>
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {PACKAGES.map((p, i) => (
-              <div key={i} className={`relative rounded-2xl p-8 flex flex-col transition-all duration-300 ${p.highlight ? "scale-105 shadow-2xl" : "hover:-translate-y-1"}`}
+              <div key={i} className={`relative rounded-2xl p-8 flex flex-col transition-all duration-300 ${p.highlight ? "md:scale-105 shadow-2xl z-10" : "hover:-translate-y-1"}`}
                 style={p.highlight
                   ? { background: "linear-gradient(135deg, #0a1628 0%, #0d1f3c 100%)", border: "1px solid rgba(0,212,255,0.35)", boxShadow: "0 0 40px rgba(0,212,255,0.15), 0 20px 60px rgba(0,0,0,0.5)" }
                   : { background: "rgba(13,17,23,0.6)", border: "1px solid rgba(255,255,255,0.07)" }}>
@@ -404,7 +405,7 @@ export default function HomePage() {
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold">Industries <span className="neon-gradient-text">We Secure</span></h2>
           </div>
-          <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {INDUSTRIES.map((ind, i) => (
               <div key={i} className="flex flex-col items-center gap-3 p-6 rounded-2xl group cursor-pointer transition-all hover:-translate-y-1" style={{ background: "rgba(13,17,23,0.6)", border: "1px solid rgba(255,255,255,0.06)" }}>
                 <div className="w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform" style={{ background: "rgba(0,212,255,0.08)", border: "1px solid rgba(0,212,255,0.15)" }}>
